@@ -29,3 +29,6 @@
 !*.json
 !Makefile
 !src
+!img
+!*.png
+!*.jpg
