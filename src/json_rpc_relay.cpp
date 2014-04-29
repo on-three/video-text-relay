@@ -1,6 +1,6 @@
 /*
   name: relay_stream_with_overlay.c
-  author: John O'Neil (somewhat. it's all cut and paste)
+  author: on_three (somewhat. it's all cut and paste)
   date: Saturday, April 27th 2014.
   desc:
     I've done all this before in python, but as Gstreamer 1.0 python support is
