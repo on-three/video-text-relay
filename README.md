@@ -108,3 +108,14 @@ If we run the above command, we can see the RPC is correctly picked up by our se
 Showing message'whut. a five second wait???' at 100,200 named one
 ```
 The results are shown below:
+
+![Overlay Demo in VLC](https://github.com/on-three/VideoTextOverlay/blob/master/img/Screenshot%20from%202014-04-28%2019:57:16.png?raw=true)
+
+#What Needs to Be Done:
+As stated above, this is fairly primitive, but I believe I've confronted all major hurdles to showing text superimposed upon a relayed video stream.
+The primary outstanding areas where work needs to be done are:
+* Currently these relay to local TCP clients (VLC via TCP connection provided by the GStreamer 'tcpsink' element). But this a better model to stream to numerous remote clients is needed. Perhaps 'tcpsink' need be replaced with the GStreamer shoutcast backend? Or their HTTP sink backend? This needs looking into.
+* I've only demonstrated a single RPC call that changes the text on the screen. I'd now have to (re) build code that allows the on-screen text to be manipulated in any number of ways: list boxes, time displays, text displays that use Pango Markup for text colors and weights.
+* The current code, though it works as a demo, is very poor quality. Needs a lot of work.
+* The JSON RPC mechanism cleanly separates relay servers from any possible client. But clients would have to be coded in some language to provide things like live IRC chats and other data.
+
