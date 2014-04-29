@@ -81,10 +81,10 @@ Okay, this is the basic relay with text overlay demo above, but with the additio
 This is just a proof of concept, but it does demonstrate where this could be carried. I'll address future work plans below.
 
 ### Running
-To actually run this, you've got to run two executables in two shells. One is the realy (as above, providing a single URL as a command line parameter):
+To actually run this, you've got to run two executables in two shells. One is the relay (as above, providing a single URL as a command line parameter):
 
 ```
- ~/code/VideoTextOverlay/src $ ./json_rpc_relay http://green-oval.net<STREAM URL>:<PORT>/;stream.nsv
+ ~/code/VideoTextOverlay/src $ ./json_rpc_relay http:/<STREAM URL>:<PORT>/;stream.nsv
 [MSG]	Received new pad 'src_0' from 'demux':
 [OK]	Pipeline of type 'video/x-raw' is now online.
 [MSG]	Received new pad 'src_1' from 'demux':
