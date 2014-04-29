@@ -46,7 +46,7 @@ This is a basic Gstreamer pipleine that connects to a remote HTTP video+audio st
 
 ###running
 ```
-~/code/VideoTextOverlay/src $ ./relay_stream http://<stream URL>/;stream.nsv
+~/code/VideoTextOverlay/src $ ./relay_stream http://<stream URL>:<PORT>/;stream.nsv
 Received new pad 'src_0' from 'demux':
   Link succeeded (type 'video/x-raw').
 Received new pad 'src_1' from 'demux':
@@ -60,7 +60,7 @@ I've currently hard coded the port to be 10000 as this is just a demo.
 ###running
 Run as below. The stream URL is still the only argument. TCP Server port is still hard coded to 10000.
 ```
-./relay_stream_with_overlay http://<stream URL>t:9613/;stream.nsv
+./relay_stream_with_overlay http://<stream URL>:<PORT>/;stream.nsv
 [MSG]	Received new pad 'src_0' from 'demux':
 [OK]	Pipeline of type 'video/x-raw' is now online.
 [MSG]	Received new pad 'src_1' from 'demux':
@@ -69,3 +69,42 @@ Run as below. The stream URL is still the only argument. TCP Server port is stil
 ```
 You can then connect VLC (and other media players?) to 'TCP://127.0.0.1:10000' and you should see something like the image below.
 
+![Overlay Demo in VLC](https://github.com/on-three/VideoTextOverlay/blob/master/img/Screenshot%20from%202014-04-28%2018:49:00.png?raw=true)
+
+
+## json_rpc_server_test and json_rpc_client_test
+These are two simple applications derived off the example code for the JSON RPC library above. They demonstrate calling a remote procedure (via TCP connection) on the server from the client.
+I'm not going to describe them further here now, but as the json_rpc_client_test exe is used below, i'll describe it there.
+
+## json_rpc_relay
+Okay, this is the basic relay with text overlay demo above, but with the addition of a JSON RPC server. If we use the corect JSON RPC client (which here is C++, but could in theory be in any language, like python or Perl) we can invoke a remote procedure on the server to alter the displayed text.
+This is just a proof of concept, but it does demonstrate where this could be carried. I'll address future work plans below.
+
+### Running
+To actually run this, you've got to run two executables in two shells. One is the realy (as above, providing a single URL as a command line parameter):
+
+```
+ ~/code/VideoTextOverlay/src $ ./json_rpc_relay http://green-oval.net<STREAM URL>:<PORT>/;stream.nsv
+[MSG]	Received new pad 'src_0' from 'demux':
+[OK]	Pipeline of type 'video/x-raw' is now online.
+[MSG]	Received new pad 'src_1' from 'demux':
+[OK]	Pipeline of type 'audio/x-raw' is now online.
+
+```
+Then, attach VLC to this relay to view the stream contents.
+
+Lastly, you can now change the screen text by using the **json_rpc_client_test** executable. This takes at least one command line argument, the text you'd like to see superimposed on the screen.
+```
+./json_rpc_client_test "whut. a five second wait???" 100 200 "one"
+```
+
+If we run the above command, we can see the RPC is correctly picked up by our server/relay as additonal debug info is currently dumped to the screen:
+```
+~/code/VideoTextOverlay/src $ ./json_rpc_relay http://<stream URL>:<PORT>/;stream.nsv
+[MSG]	Received new pad 'src_0' from 'demux':
+[OK]	Pipeline of type 'video/x-raw' is now online.
+[MSG]	Received new pad 'src_1' from 'demux':
+[OK]	Pipeline of type 'audio/x-raw' is now online.
+Showing message'whut. a five second wait???' at 100,200 named one
+```
+The results are shown below:
