@@ -19,3 +19,13 @@
 *.exe
 *.out
 *.app
+
+#all files (since I'm not using extensions for the moment on object files)
+*
+!*.c
+!*.h
+!*.hpp
+!*.cpp
+!*.json
+!Makefile
+!src
