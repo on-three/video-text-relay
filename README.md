@@ -8,7 +8,7 @@ This is a series of simple c++ executables that recreate some work i had done us
 None of this is very involved, and it can be considered pretty 'typical' GStreamer code.
 
 #Status
-This is all still fairly primitive, mostly as i'm reimplimenting previous work in python. Still, at this point, the following is accomplished:
+This is all still fairly primitive, mostly as I'm reimplimenting previous work in python. Still, at this point, the following is accomplished:
 * **relay_stream:** relays an existing HTTP video+audio stream to a (local) TCP connection, visible to VLC (for example).
 * **relay_stream_with_overlay:** As relay_stream above, but with a demo text crawl superimposed on the stream.
 * **json_rpc_client_test:** A test application to send JSON Remote Procedure Calls to corresponding JSON RPC servers. This makes a single remote procedure call as an example
@@ -16,7 +16,7 @@ This is all still fairly primitive, mostly as i'm reimplimenting previous work i
 * **json_rpc_relay:** The above **relay_stream_with_overlay** executable with the addition of an embedded (simple) RPC server. This can receive a single remote procedure call that chages the displayed scrolling text on the screen.
 
 #building
-I've tried to make it as simple to compile as possible, but this still relies upon having development packages for Gtk and GStreamer being available. I've only built it in LinuxMint16, where the following command _should_ cover all the ##Package Dependencies:
+I've tried to make it as simple to compile as possible, but this still relies upon having development packages for Gtk and GStreamer being available. I've only built it in LinuxMint16, where the following command _should_ cover all the Package Dependencies:
 
 ```
 sudo apt-get install g++ libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libcairo2-dev libglib2.0-dev libgstreamer-plugins-good1.0-dev
@@ -114,7 +114,7 @@ The results are shown below:
 #What Needs to Be Done:
 As stated above, this is fairly primitive, but I believe I've confronted all major hurdles to showing text superimposed upon a relayed video stream.
 The primary outstanding areas where work needs to be done are:
-* Currently these relay to local TCP clients (VLC via TCP connection provided by the GStreamer 'tcpsink' element). But this a better model to stream to numerous remote clients is needed. Perhaps 'tcpsink' need be replaced with the GStreamer shoutcast backend? Or their HTTP sink backend? This needs looking into.
+* Currently these executables relay to local TCP clients (VLC via TCP connection provided by the GStreamer 'tcpsink' element). But a better model to stream to numerous remote clients may be needed. Perhaps 'tcpsink' need be replaced with the GStreamer shoutcast backend? Or their HTTP sink backend? This needs looking into.
 * I've only demonstrated a single RPC call that changes the text on the screen. I'd now have to (re) build code that allows the on-screen text to be manipulated in any number of ways: list boxes, time displays, text displays that use Pango Markup for text colors and weights.
 * The current code, though it works as a demo, is very poor quality. Needs a lot of work.
 * The JSON RPC mechanism cleanly separates relay servers from any possible client. But clients would have to be coded in some language to provide things like live IRC chats and other data.
