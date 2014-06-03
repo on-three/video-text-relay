@@ -1,0 +1,12 @@
+[
+    {	//This is how you define a method with named parameters.
+        "method": "ShowMessage",
+        "params": {
+            "msg": "my message",
+						"x": 1,
+						"y": 2,
+						"friendlyName" : "my_message"
+        },
+        "returns": "my_message"
+    }
+]
