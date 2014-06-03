@@ -14,6 +14,7 @@ Relays HTTP served video stream to TCP/IP
 
 #include "video_overlay_rpc_server.hpp"
 #include <string>
+#include <cairo.h>
 
 class Relay
 {
