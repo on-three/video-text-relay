@@ -28,12 +28,12 @@ Relay::Relay(const std::string& name, const std::string& uri)
   ,valid(false)
   ,width(0)
   ,height(0)
-  ,current_x_coord(0)
+  //,current_x_coord(0)
   ,previous_timestamp(0)
-  ,blurb("Testing, one, two, three...")
+  //,blurb("Testing, one, two, three...")
 {
   //TODO: Move to RAII
-  m_rpc_server = new VideoOverlayRPCServer(&queue);
+  m_rpc_server = new VideoOverlayRPCServer();
 }
 
 Relay::~Relay() {
@@ -123,7 +123,8 @@ bool Relay::Initialize(void) {
   g_signal_connect(overlay, "caps-changed",G_CALLBACK (Relay::prepare_overlay), this);
 
   //start jsonrpc server
-  m_rpc_server->StartListening();
+  //m_rpc_server->StartListening();
+  m_rpc_server->Initialize();
 
   return true;
 
@@ -218,7 +219,7 @@ exit:
 }
 
 
-void Relay::prepare_overlay (GstElement * overlay, GstCaps * caps, gpointer user_data)
+void Relay::prepare_overlay(GstElement * overlay, GstCaps * caps, gpointer user_data)
 {
   Relay *s = static_cast<Relay*>(user_data);
 
@@ -227,14 +228,15 @@ void Relay::prepare_overlay (GstElement * overlay, GstCaps * caps, gpointer user
   gst_video_info_from_caps(&info, caps);
   s->width = info.width;
   s->height = info.height;
-  s->current_x_coord = info.width;
+  s->m_rpc_server->Resize(info.width, info.height);
+  //s->current_x_coord = info.width;
   //TODO: Set this to actual current timestamp value(if possible)
   s->previous_timestamp = -1;
   s->valid = TRUE;
  }
 
 
-void Relay::draw_overlay (GstElement * overlay, cairo_t * cr, guint64 timestamp, 
+void Relay::draw_overlay(GstElement * overlay, cairo_t * cr, guint64 timestamp, 
    guint64 duration, gpointer user_data)
  {
    Relay *s = static_cast<Relay*>(user_data);
@@ -248,33 +250,12 @@ void Relay::draw_overlay (GstElement * overlay, cairo_t * cr, guint64 timestamp,
     s->previous_timestamp = timestamp;
   }
 
-  //Are there commands to take out of our RPC queue?
-  if(!s->queue.empty())
-  {
-    s->blurb = s->queue.front();
-    s->queue.pop();
-  }
-  
-  cairo_text_extents_t te;
-  cairo_set_source_rgb (cr, 1.0, 1.0, 0.0);
-  cairo_select_font_face (cr, "Georgia", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-  cairo_set_font_size (cr, 35.0);
-  cairo_text_extents (cr, s->blurb.c_str(), &te);
-  double dt = ((timestamp-s->previous_timestamp)/(double)1e9);//time format is in nanoseconds, so we convert to seconds
-  //double dt = ((duration)/(double)1e9);//time format is in nanoseconds, so we convert to seconds
-  s->previous_timestamp = timestamp;
-  //printf("elapsed time %f", elapsed_time);
-  s->current_x_coord -= ((s->width+te.width)/12.0)*dt;//full scroll in 12 seconds.
-  if(s->current_x_coord<(-1.0*te.width))//wraparound.
-  {
-    s->current_x_coord = s->width;
-  }
-  //cairo_move_to (cr, 0.5 - te.width / 2 - te.x_bearing, 0.5 - te.height / 2 - te.y_bearing);
-  cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
-  cairo_move_to(cr, s->current_x_coord+3, (2*s->height/3)+3);
-  cairo_show_text (cr, s->blurb.c_str());
-  cairo_set_source_rgb (cr, 1.0, 1.0, 0.0);
-  cairo_move_to(cr, s->current_x_coord, 2*s->height/3);
-  cairo_show_text (cr, s->blurb.c_str());
+  //TODO: Calculate dt as float
+  float dt = 0.001f;
+
+  //TODO: abstract these controllers into some generic plugin type.
+  s->m_rpc_server->Update(dt);
+  s->m_rpc_server->Draw(cr, dt);
+
 }
 

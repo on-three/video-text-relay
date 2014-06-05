@@ -53,11 +53,10 @@ private:
   gboolean valid;
   int width;
   int height;
-  int current_x_coord;
   guint64 previous_timestamp;
-  Queue< std::string > queue;
+  //Queue< std::string > queue;
   VideoOverlayRPCServer* m_rpc_server;
-  std::string blurb;// = "This is a test. This is ONLY a test...";
+  
 
 public:
   static void prepare_overlay (GstElement * overlay, GstCaps * caps, gpointer user_data);

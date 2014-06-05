@@ -5,20 +5,32 @@
 
 #include "colors.h"
 #include "abstract_video_overlay_rpc_server.h"
-#include "threadsafe_queue.hpp"
+#include <cairo.h>
+#include "msg_scroll.hpp"
+#include <thread>
+#include <mutex>
 
 using namespace jsonrpc;
-using namespace std;
+//using namespace std;
 
 class VideoOverlayRPCServer : public Abstract_video_overlay_rpc_Server {
 public:
-  VideoOverlayRPCServer(Queue<std::string>* queue);
+  VideoOverlayRPCServer();
 
   virtual std::string ShowMessage(const std::string& friendlyName, const std::string& msg, const int& x, const int& y);
   virtual std::string add_scrolling_msg(const std::string& friendly_name, const int& loop, const std::string& msg, const int& size, const int& y_pos);
   virtual std::string remove_scrolling_msg(const std::string& friendly_name);
+
+public:
+  void Initialize(void);
+  void Resize(const int width, const int height);
+  void Update(float dt);
+  void Draw(cairo_t * cr, float dt);
 private:
-  Queue<std::string>* m_queue;
+  ScrollingMsgController m_scrollingMsgController;
+  int m_width;
+  int m_height;
+  std::mutex m_mutex;
 };
 
 #endif
