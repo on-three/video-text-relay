@@ -53,8 +53,21 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
   PangoFontDescription *pango_fontdesc;
 
   pango_layout = pango_cairo_create_layout(context);
+  PangoAttrList* pTextAttributes = pango_attr_list_new();
+  gchar *text = 0;//stupidly gchar disallows deallocation, but not in code
+  if(!pango_parse_markup (m_msg.c_str(),
+                    -1,//null terminated text string above
+                    0,//no accellerated marker
+                    &pTextAttributes,
+                    &text,
+                    NULL,
+                    NULL))
+  {
 
-  pango_layout_set_text(pango_layout, m_msg.c_str(), -1);
+  }
+  pango_layout_set_text(pango_layout, text, -1);
+  pango_layout_set_attributes (pango_layout, pTextAttributes);
+  pango_attr_list_unref(pTextAttributes);
   pango_fontdesc = pango_font_description_from_string(m_fontfamily.c_str());
   pango_layout_set_font_description(pango_layout, pango_fontdesc);
   pango_font_description_free(pango_fontdesc);
