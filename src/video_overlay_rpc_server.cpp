@@ -47,6 +47,7 @@ void VideoOverlayRPCServer::Resize(const int width, const int height)
 {
   m_width = width;
   m_height = height;
+  m_scrollingMsgController.Resize(width, height);
 }
 
 void VideoOverlayRPCServer::Initialize(void) {

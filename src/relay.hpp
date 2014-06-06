@@ -54,7 +54,6 @@ private:
   int width;
   int height;
   guint64 previous_timestamp;
-  //Queue< std::string > queue;
   VideoOverlayRPCServer* m_rpc_server;
   
 

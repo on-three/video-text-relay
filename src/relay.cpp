@@ -28,9 +28,7 @@ Relay::Relay(const std::string& name, const std::string& uri)
   ,valid(false)
   ,width(0)
   ,height(0)
-  //,current_x_coord(0)
   ,previous_timestamp(0)
-  //,blurb("Testing, one, two, three...")
 {
   //TODO: Move to RAII
   m_rpc_server = new VideoOverlayRPCServer();
@@ -118,12 +116,10 @@ bool Relay::Initialize(void) {
   g_signal_connect(demux, "pad-added", G_CALLBACK (Relay::pad_added_handler), this);
 
   /* connect 'on draw' and video image size change handlers to cairo overlay*/
-  //CairoOverlayState overlay_state;
   g_signal_connect(overlay,"draw", G_CALLBACK (Relay::draw_overlay), this);
   g_signal_connect(overlay, "caps-changed",G_CALLBACK (Relay::prepare_overlay), this);
 
   //start jsonrpc server
-  //m_rpc_server->StartListening();
   m_rpc_server->Initialize();
 
   return true;
@@ -223,14 +219,11 @@ void Relay::prepare_overlay(GstElement * overlay, GstCaps * caps, gpointer user_
 {
   Relay *s = static_cast<Relay*>(user_data);
 
-   /*gst_video_format_parse_caps (caps, NULL, &state->width, &state->height);*/
   GstVideoInfo info;
   gst_video_info_from_caps(&info, caps);
   s->width = info.width;
   s->height = info.height;
   s->m_rpc_server->Resize(info.width, info.height);
-  //s->current_x_coord = info.width;
-  //TODO: Set this to actual current timestamp value(if possible)
   s->previous_timestamp = -1;
   s->valid = TRUE;
  }
@@ -250,8 +243,9 @@ void Relay::draw_overlay(GstElement * overlay, cairo_t * cr, guint64 timestamp,
     s->previous_timestamp = timestamp;
   }
 
-  //TODO: Calculate dt as float
-  float dt = 0.001f;
+  //time format is in nanoseconds, so we convert to seconds
+  const float dt = (timestamp - s->previous_timestamp)/1e9f;
+  s->previous_timestamp = timestamp;
 
   //TODO: abstract these controllers into some generic plugin type.
   s->m_rpc_server->Update(dt);

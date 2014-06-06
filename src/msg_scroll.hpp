@@ -35,7 +35,7 @@ public:
   ,m_friendly_name(friendly_name)
   ,m_msg(msg)
   ,m_loops(loop)
-  ,m_current_loop(-1)
+  ,m_current_loop(0)
   ,m_size(size)
   ,m_ypos(ypos)
   ,m_xpos(current_w)
@@ -57,26 +57,17 @@ public:
   void Draw(cairo_t* context, const float dt)
   {
 
-  //TODO:In current initial state, the previous_timestamp value is invalid.
-  //if(s->previous_timestamp<0) {
-  //  s->previous_timestamp = timestamp;
-  //}
-  
   cairo_text_extents_t te;
   cairo_set_source_rgb (context, 1.0, 1.0, 0.0);
   cairo_select_font_face (context, "Georgia", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
   cairo_set_font_size (context, 35.0);
   cairo_text_extents (context, m_msg.c_str(), &te);
-  //double dt = ((timestamp-s->previous_timestamp)/(double)1e9);//time format is in nanoseconds, so we convert to seconds
-  //double dt = ((duration)/(double)1e9);//time format is in nanoseconds, so we convert to seconds
-  //s->previous_timestamp = timestamp;
-  //printf("elapsed time %f", elapsed_time);
-  m_xpos -= ((m_current_w+te.width)/12.0)*dt;//full scroll in 12 seconds.
-  if(m_xpos<(-1.0*m_current_w))//wraparound.
-  {
+
+  //d_pos = d/t * dt
+  m_xpos -= ((m_current_w + te.width)/m_scroll_time)*dt;
+  if(m_xpos<(-1.0f*te.width)) {//wraparound
     m_xpos = m_current_w;
   }
-  //cairo_move_to (context, 0.5 - te.width / 2 - te.x_bearing, 0.5 - te.height / 2 - te.y_bearing);
   cairo_set_source_rgb (context, 0.0, 0.0, 0.0);
   cairo_move_to(context, m_xpos+3, (2*m_current_h/3)+3);
   cairo_show_text (context, m_msg.c_str());
@@ -95,12 +86,6 @@ private:
   int m_ypos;
   int m_xpos;
   int m_scroll_time;
-
-private:
-  //ScrollingMsg();
-  //ScrollingMsg(const ScrollingMsg&);
-  //ScrollingMsg operator=(const ScrollingMsg&);
-
 };
 
 class ScrollingMsgController
@@ -137,7 +122,7 @@ public:
   };
 
   void Update(float dt) {
-    cout<<__FUNCTION__<<" "<<dt<<endl;
+    //cout<<__FUNCTION__<<" "<<dt<<endl;
     for(std::map< std::string, ScrollingMsg >::iterator imsg=m_msgs.begin();
       imsg!=m_msgs.end(); ++imsg)
     {
@@ -149,11 +134,19 @@ public:
     }
   };
   void Draw(cairo_t* context, const float dt) {
-    cout<<__FUNCTION__<<" "<<dt<<endl;
+    //cout<<__FUNCTION__<<" "<<dt<<endl;
     for(std::map< std::string, ScrollingMsg >::iterator imsg=m_msgs.begin();
       imsg!=m_msgs.end(); ++imsg)
     {
       imsg->second.Draw(context, dt);
+    }
+  }
+
+  void Resize(const int width, const int height) {
+    for(std::map< std::string, ScrollingMsg >::iterator imsg=m_msgs.begin();
+      imsg!=m_msgs.end(); ++imsg)
+    {
+      imsg->second.Resize(width, height);
     }
   }
 
