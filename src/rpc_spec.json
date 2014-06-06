@@ -13,10 +13,11 @@
     {   //Create a scrolling message with text "text" and name "name"
         "method": "add_scrolling_msg",
         "params": {
-            "msg": "my message",
-            "size": 24,//font size in points
-            "y_pos": 2,//y post of scroll in pixels
+            "msg": "my message",//text of message (can contain pango markup)
+            "font": "Sans Bold 12",//pangocairo style font family description
+            "y_pos": 300,//y post of scroll in pixels
             "loop": 0,//0 loops will loop forever. N loop loops N times
+            "scroll_time" : 12.0,//time for message to crall accross screen in seconds
             "friendly_name" : "my_message"//can call subsequent methods on same msg via this name
         },
         "returns": "my_message"

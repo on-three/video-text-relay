@@ -13,21 +13,21 @@ std::string VideoOverlayRPCServer::ShowMessage(const std::string& friendly_name,
 {
   std::lock_guard<std::mutex> l(m_mutex);
 
-  m_scrollingMsgController.AddMsg(friendly_name,
-    msg, 
-    0, 32, y,
-    m_width, m_height, 12.0f);
+  //TODO: REMOVE THIS LEGACY INTERFACE
   return friendly_name;
 }
 
-std::string VideoOverlayRPCServer::add_scrolling_msg(const std::string& friendly_name, const int& loop, const std::string& msg, const int& size, const int& y_pos)
+std::string VideoOverlayRPCServer::add_scrolling_msg(const std::string& font, 
+  const std::string& friendly_name, 
+  const int& loop, 
+  const std::string& msg, 
+  const double& scroll_time, 
+  const int& y_pos)
 {
   std::lock_guard<std::mutex> l(m_mutex);
 
-  m_scrollingMsgController.AddMsg(friendly_name,
-    msg, 
-    loop, size, y_pos,
-    m_width, m_height, 12.0f);
+  m_scrollingMsgController.AddMsg(m_width, m_height,
+    font, friendly_name, loop, msg, scroll_time, y_pos);
   return friendly_name;
 }
 std::string VideoOverlayRPCServer::remove_scrolling_msg(const std::string& friendly_name)

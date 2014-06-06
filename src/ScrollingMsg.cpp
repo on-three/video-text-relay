@@ -1,4 +1,5 @@
 #include "ScrollingMsg.hpp"
+#include <pango/pangocairo.h>
 
 ScrollingMsg::ScrollingMsg()
   :m_current_w(0)
@@ -7,26 +8,30 @@ ScrollingMsg::ScrollingMsg()
   ,m_msg("None")
   ,m_loops(0)
   ,m_current_loop(0)
-  ,m_size(0)
+  ,m_fontfamily("Sans Bold 12")
   ,m_ypos(300)
   ,m_xpos(0)
   ,m_scroll_time(12.0f)
 {
 
 };
-ScrollingMsg::ScrollingMsg(const std::string& friendly_name,
-  const std::string& msg, 
-  const int loop, const int size, const int ypos,
-  const int current_w, int current_h, int scroll_time)
-  :m_current_w(current_w)
-  ,m_current_h(current_h)
+ScrollingMsg::ScrollingMsg( const int width, 
+                            const int height,
+                            const std::string& font, 
+                            const std::string& friendly_name, 
+                            const int& loop, 
+                            const std::string& msg, 
+                            const double& scroll_time,
+                            const int& y_pos)
+  :m_current_w(width)
+  ,m_current_h(height)
   ,m_friendly_name(friendly_name)
   ,m_msg(msg)
   ,m_loops(loop)
   ,m_current_loop(0)
-  ,m_size(size)
-  ,m_ypos(ypos)
-  ,m_xpos(current_w)
+  ,m_fontfamily(font)
+  ,m_ypos(y_pos)
+  ,m_xpos(width)
   ,m_scroll_time(scroll_time)
 {
 
@@ -42,28 +47,39 @@ void ScrollingMsg::Update(const float dt)
 };
 void ScrollingMsg::Draw(cairo_t* context, const float dt)
 {
+  cairo_save(context);
+
+  PangoLayout *pango_layout;
+  PangoFontDescription *pango_fontdesc;
+
+  pango_layout = pango_cairo_create_layout(context);
+
+  pango_layout_set_text(pango_layout, m_msg.c_str(), -1);
+  pango_fontdesc = pango_font_description_from_string(m_fontfamily.c_str());
+  pango_layout_set_font_description(pango_layout, pango_fontdesc);
+  pango_font_description_free(pango_fontdesc);
+
 
   cairo_text_extents_t te;
   cairo_set_source_rgb (context, 1.0, 1.0, 0.0);
-  cairo_select_font_face (context, "Georgia", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-  cairo_set_font_size (context, 35.0);
-  cairo_text_extents (context, m_msg.c_str(), &te);
+  PangoRectangle ink_rect, logical_rect;
+  pango_layout_get_pixel_extents(pango_layout, &ink_rect, &logical_rect);
 
   //d_pos = d/t * dt
-  m_xpos -= ((m_current_w + te.width)/m_scroll_time)*dt;
-  if(m_xpos<(-1.0f*te.width)) {//wraparound
+  m_xpos -= ((m_current_w + ink_rect.width)/m_scroll_time)*dt;
+  if(m_xpos<(-1.0f*ink_rect.width)) {//wraparound
     m_xpos = m_current_w;
     m_current_loop += 1;
     if(m_current_loop==m_loops) {
       m_current_loop = -1;//indicates controller should remove this msg.
     }
   }
-  cairo_set_source_rgb (context, 0.0, 0.0, 0.0);
-  cairo_move_to(context, m_xpos+3, m_ypos+3);
-  cairo_show_text (context, m_msg.c_str());
-  cairo_set_source_rgb (context, 1.0, 1.0, 0.0);
-  cairo_move_to(context, m_xpos, m_ypos);
-  cairo_show_text (context, m_msg.c_str());
+  cairo_translate(context, m_xpos, m_ypos);
+  pango_cairo_update_layout(context, pango_layout);
+  pango_cairo_show_layout(context, pango_layout);
+
+  g_object_unref(pango_layout);
+  cairo_restore (context);
 }
 
 
@@ -73,13 +89,17 @@ ScrollingMsgController::ScrollingMsgController()
 
 }
 
-void ScrollingMsgController::AddMsg(const std::string& friendly_name,
+void ScrollingMsgController::AddMsg(const int width, 
+  const int height, 
+  const std::string& font, 
+  const std::string& friendly_name, 
+  const int& loop, 
   const std::string& msg, 
-  const int loop, const int size, const int ypos,
-  const int current_w, int current_h, int scroll_time)
+  const double& scroll_time, 
+  const int& y_pos)
 {
   if(m_msgs.find(friendly_name)==m_msgs.end()) {
-    m_msgs[friendly_name]=ScrollingMsg(friendly_name, msg, loop, size, ypos, current_w, current_h, scroll_time);
+    m_msgs[friendly_name]=ScrollingMsg(width, height, font, friendly_name, loop, msg, scroll_time, y_pos);
   }
 }
 

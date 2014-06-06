@@ -21,10 +21,14 @@ class ScrollingMsg
 {
 public:
   ScrollingMsg();
-  ScrollingMsg(const std::string& friendly_name,
+  ScrollingMsg(const int width, 
+    const int height,
+    const std::string& font, 
+    const std::string& friendly_name, 
+    const int& loop, 
     const std::string& msg, 
-    const int loop, const int size, const int ypos,
-    const int current_w, int current_h, int scroll_time);
+    const double& scroll_time, 
+    const int& y_pos);
 
 public:
   int CurrentLoop(void)const{return m_current_loop;};
@@ -40,7 +44,7 @@ private:
   std::string m_msg;
   int m_loops;
   int m_current_loop;
-  int m_size;
+  std::string m_fontfamily;
   int m_ypos;
   int m_xpos;
   int m_scroll_time;
@@ -52,10 +56,14 @@ public:
   ScrollingMsgController();
 
 public:
-  void AddMsg(const std::string& friendly_name,
+  void AddMsg(const int width, 
+    const int height, 
+    const std::string& font, 
+    const std::string& friendly_name, 
+    const int& loop, 
     const std::string& msg, 
-    const int loop, const int size, const int ypos,
-    const int current_w, int current_h, int scroll_time);
+    const double& scroll_time, 
+    const int& y_pos);
   void RemoveMsg(const std::string& friendly_name);
 
 public:

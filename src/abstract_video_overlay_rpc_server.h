@@ -14,7 +14,7 @@ class Abstract_video_overlay_rpc_Server : public jsonrpc::AbstractServer<Abstrac
             jsonrpc::AbstractServer<Abstract_video_overlay_rpc_Server>(conn) 
         {
             this->bindAndAddMethod(new jsonrpc::Procedure("ShowMessage", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "friendlyName",jsonrpc::JSON_STRING,"msg",jsonrpc::JSON_STRING,"x",jsonrpc::JSON_INTEGER,"y",jsonrpc::JSON_INTEGER, NULL), &Abstract_video_overlay_rpc_Server::ShowMessageI);
-            this->bindAndAddMethod(new jsonrpc::Procedure("add_scrolling_msg", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "friendly_name",jsonrpc::JSON_STRING,"loop",jsonrpc::JSON_INTEGER,"msg",jsonrpc::JSON_STRING,"size",jsonrpc::JSON_INTEGER,"y_pos",jsonrpc::JSON_INTEGER, NULL), &Abstract_video_overlay_rpc_Server::add_scrolling_msgI);
+            this->bindAndAddMethod(new jsonrpc::Procedure("add_scrolling_msg", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "font",jsonrpc::JSON_STRING,"friendly_name",jsonrpc::JSON_STRING,"loop",jsonrpc::JSON_INTEGER,"msg",jsonrpc::JSON_STRING,"scroll_time",jsonrpc::JSON_REAL,"y_pos",jsonrpc::JSON_INTEGER, NULL), &Abstract_video_overlay_rpc_Server::add_scrolling_msgI);
             this->bindAndAddMethod(new jsonrpc::Procedure("remove_scrolling_msg", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "friendly_name",jsonrpc::JSON_STRING, NULL), &Abstract_video_overlay_rpc_Server::remove_scrolling_msgI);
 
         }
@@ -26,7 +26,7 @@ class Abstract_video_overlay_rpc_Server : public jsonrpc::AbstractServer<Abstrac
 
         inline virtual void add_scrolling_msgI(const Json::Value& request, Json::Value& response) 
         {
-            response = this->add_scrolling_msg(request["friendly_name"].asString(), request["loop"].asInt(), request["msg"].asString(), request["size"].asInt(), request["y_pos"].asInt());
+            response = this->add_scrolling_msg(request["font"].asString(), request["friendly_name"].asString(), request["loop"].asInt(), request["msg"].asString(), request["scroll_time"].asDouble(), request["y_pos"].asInt());
         }
 
         inline virtual void remove_scrolling_msgI(const Json::Value& request, Json::Value& response) 
@@ -36,7 +36,7 @@ class Abstract_video_overlay_rpc_Server : public jsonrpc::AbstractServer<Abstrac
 
 
         virtual std::string ShowMessage(const std::string& friendlyName, const std::string& msg, const int& x, const int& y) = 0;
-        virtual std::string add_scrolling_msg(const std::string& friendly_name, const int& loop, const std::string& msg, const int& size, const int& y_pos) = 0;
+        virtual std::string add_scrolling_msg(const std::string& font, const std::string& friendly_name, const int& loop, const std::string& msg, const double& scroll_time, const int& y_pos) = 0;
         virtual std::string remove_scrolling_msg(const std::string& friendly_name) = 0;
 
 };
