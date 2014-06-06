@@ -1,8 +1,5 @@
 #include "video_overlay_rpc_server.hpp"
-#include <iostream>
 
-using std::cout;
-using std::endl;
 
 VideoOverlayRPCServer::VideoOverlayRPCServer()
   :Abstract_video_overlay_rpc_Server(new HttpServer(8080))
@@ -14,9 +11,7 @@ VideoOverlayRPCServer::VideoOverlayRPCServer()
 std::string VideoOverlayRPCServer::ShowMessage(const std::string& friendly_name, 
   const std::string& msg, const int& x, const int& y)
 {
-  cout<<"locking show message"<<endl;
   std::lock_guard<std::mutex> l(m_mutex);
-  cout<<"Show message locked"<<endl;
 
   m_scrollingMsgController.AddMsg(friendly_name,
     msg, 

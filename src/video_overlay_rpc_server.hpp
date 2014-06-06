@@ -3,10 +3,9 @@
 #ifndef __VIDEO_OVERLAY_RPC_SERVER_HPP__
 #define __VIDEO_OVERLAY_RPC_SERVRE_HPP__
 
-#include "colors.h"
 #include "abstract_video_overlay_rpc_server.h"
+#include "ScrollingMsg.hpp"
 #include <cairo.h>
-#include "msg_scroll.hpp"
 #include <thread>
 #include <mutex>
 
