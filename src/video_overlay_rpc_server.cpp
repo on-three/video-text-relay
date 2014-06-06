@@ -54,11 +54,13 @@ void VideoOverlayRPCServer::Initialize(void) {
   StartListening();
 }
 void VideoOverlayRPCServer::Update(float dt) {
+  std::lock_guard<std::mutex> l(m_mutex);
   m_scrollingMsgController.Update(dt);
 }
 void VideoOverlayRPCServer::Draw(cairo_t * cr, float dt) {
   if(m_width==0 or m_height==0) {
     return;
   }
+  std::lock_guard<std::mutex> l(m_mutex);
   m_scrollingMsgController.Draw(cr, dt);
 }

@@ -20,7 +20,7 @@ public:
   ,m_loops(0)
   ,m_current_loop(0)
   ,m_size(0)
-  ,m_ypos(0)
+  ,m_ypos(300)
   ,m_xpos(0)
   ,m_scroll_time(12.0f)
   {
@@ -67,12 +67,16 @@ public:
   m_xpos -= ((m_current_w + te.width)/m_scroll_time)*dt;
   if(m_xpos<(-1.0f*te.width)) {//wraparound
     m_xpos = m_current_w;
+    m_current_loop += 1;
+    if(m_current_loop==m_loops) {
+      m_current_loop = -1;//indicates controller should remove this msg.
+    }
   }
   cairo_set_source_rgb (context, 0.0, 0.0, 0.0);
-  cairo_move_to(context, m_xpos+3, (2*m_current_h/3)+3);
+  cairo_move_to(context, m_xpos+3, m_ypos+3);
   cairo_show_text (context, m_msg.c_str());
   cairo_set_source_rgb (context, 1.0, 1.0, 0.0);
-  cairo_move_to(context, m_xpos, 2*m_current_h/3);
+  cairo_move_to(context, m_xpos, m_ypos);
   cairo_show_text (context, m_msg.c_str());
   }
 
@@ -124,13 +128,16 @@ public:
   void Update(float dt) {
     //cout<<__FUNCTION__<<" "<<dt<<endl;
     for(std::map< std::string, ScrollingMsg >::iterator imsg=m_msgs.begin();
-      imsg!=m_msgs.end(); ++imsg)
+      imsg!=m_msgs.end();)
     {
-      //imsg->second.Update(dt);
+      imsg->second.Update(dt);
       //remove those msgs that are 'done'
-      //if(imsg->second.CurrentLoop()<0) {
-      //  imsg = m_msgs.erase(imsg);
-      //}
+      if(imsg->second.CurrentLoop()<0) {
+        cout<<"removing msg with key "<<imsg->first<<endl;
+        imsg = m_msgs.erase(imsg);
+      }else{
+        ++imsg;
+      }
     }
   };
   void Draw(cairo_t* context, const float dt) {
