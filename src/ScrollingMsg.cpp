@@ -53,9 +53,10 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
   PangoFontDescription *pango_fontdesc;
 
   pango_layout = pango_cairo_create_layout(context);
+  pango_fontdesc = pango_font_description_from_string(m_fontfamily.c_str());
   PangoAttrList* pTextAttributes = pango_attr_list_new();
   gchar *text = 0;//stupidly gchar disallows deallocation, but not in code
-  if(!pango_parse_markup (m_msg.c_str(),
+  if(pango_parse_markup(m_msg.c_str(),
                     -1,//null terminated text string above
                     0,//no accellerated marker
                     &pTextAttributes,
@@ -63,18 +64,19 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
                     NULL,
                     NULL))
   {
-
+    //(relay:30805): Pango-CRITICAL **: pango_layout_set_text: assertion 'length == 0 || text != NULL' failed
+    pango_layout_set_text(pango_layout, text, -1);
+    pango_layout_set_attributes (pango_layout, pTextAttributes);
+    pango_layout_set_font_description(pango_layout, pango_fontdesc);
+    
+  }else{
+    pango_layout_set_font_description(pango_layout, pango_fontdesc);
+    pango_layout_set_text(pango_layout, m_msg.c_str(), -1);
   }
-  pango_layout_set_text(pango_layout, text, -1);
-  pango_layout_set_attributes (pango_layout, pTextAttributes);
-  pango_attr_list_unref(pTextAttributes);
-  pango_fontdesc = pango_font_description_from_string(m_fontfamily.c_str());
-  pango_layout_set_font_description(pango_layout, pango_fontdesc);
-  pango_font_description_free(pango_fontdesc);
 
 
   cairo_text_extents_t te;
-  cairo_set_source_rgb (context, 1.0, 1.0, 0.0);
+  cairo_set_source_rgb (context, 1.0, 1.0, 1.0);
   PangoRectangle ink_rect, logical_rect;
   pango_layout_get_pixel_extents(pango_layout, &ink_rect, &logical_rect);
 
@@ -91,6 +93,8 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
   pango_cairo_update_layout(context, pango_layout);
   pango_cairo_show_layout(context, pango_layout);
 
+  pango_attr_list_unref(pTextAttributes);
+  pango_font_description_free(pango_fontdesc);
   g_object_unref(pango_layout);
   cairo_restore (context);
 }
