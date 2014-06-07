@@ -1,5 +1,5 @@
-#VideoTextOverlay
-Simple Gstreamer based video text overlay. Driven by JSON RPC calls.
+#video-text-relay
+Simple Gstreamer based video stream relay which can overlay text of various sorts. Text can be set by tcp clients via JSON RPC calls, allowing simply coded daemons to dynamically change text superimposed on video streams.
 
 
 #Overview
