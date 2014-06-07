@@ -3,7 +3,7 @@ Simple Gstreamer based video text overlay. Driven by JSON RPC calls.
 
 
 #Overview
-This code builds a single executable, `video-text-realay`, which does the following:
+This code builds a single executable, `video-text-relay`, which does the following:
 * Connects to an HTTP served viseo stream (of various containers/audio+video encodings)
 * Renders text on the decoded video
 * Reencodes the video to a standard MPEGTS(h264/mp3) video with text overlays
@@ -41,7 +41,7 @@ Haven't tried to build on Windows yet. In theory it ought to build, but I don't 
 ##running video-text-realay
 Run as below. The stream URL is  currently the only argument. TCP Server port is still hard coded to 10000.
 ```
-./video-text-realay "http://<stream URL>:<PORT>/;stream.nsv"
+./video-text-relay "http://<stream URL>:<PORT>/;stream.nsv"
 [MSG]	Received new pad 'src_0' from 'demux':
 [OK]	Pipeline of type 'video/x-raw' is now online.
 [MSG]	Received new pad 'src_1' from 'demux':
