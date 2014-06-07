@@ -117,7 +117,7 @@ optional arguments:
 
 ```
 An example of some Staic text can be seen below:
-![Overlay Demo in VLC](https://github.com/on-three/VideoTextOverlay/blob/master/img/Screenshot%20from%202014-04-28%2018:49:00.png?raw=true)
+![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/VideoTextOverlay/e3a66d8a2a544106cd3198091f11d275a18979f8/img/Screenshot%20from%202014-04-28%2019:57:16.png)
 
 #What Needs to Be Done:
 As stated above, this is fairly primitive, but I believe I've confronted all major hurdles to showing text superimposed upon a relayed video stream.
