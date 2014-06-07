@@ -3,23 +3,23 @@ Simple Gstreamer based video text overlay. Driven by JSON RPC calls.
 
 
 #Overview
-This is a series of simple c++ executables that recreate some work i had done using the Gstreamer python binding. But since the python binding is very unstable (0.1 version does not support .nsv stream container, 1.0 version does not yet support Cairo) I'm reimplimenting in straight C/C++ which appears more mature.
+This code builds a single executable, `video-text-realay`, which does the following:
+* Connects to an HTTP served viseo stream (of various containers/audio+video encodings)
+* Renders text on the decoded video
+* Reencodes the video to a standard MPEGTS(h264/mp3) video with text overlays
+* Relays the video stream to a local TCP server currently at 127.0.0.1:10000
+* Text can be added/removed via JSON RPC calls currently on 127.0.0.1:8080
 
 None of this is very involved, and it can be considered pretty 'typical' GStreamer code.
 
 #Status
-This is all still fairly primitive, mostly as I'm reimplimenting previous work in python. Still, at this point, the following is accomplished:
-* **relay_stream:** relays an existing HTTP video+audio stream to a (local) TCP connection, visible to VLC (for example).
-* **relay_stream_with_overlay:** As relay_stream above, but with a demo text crawl superimposed on the stream.
-* **json_rpc_client_test:** A test application to send JSON Remote Procedure Calls to corresponding JSON RPC servers. This makes a single remote procedure call as an example
-* **json_rpc_server_test:** A test application to receive JSON Remote Procedure calls. Works to test the _client_test application data above.
-* **json_rpc_relay:** The above **relay_stream_with_overlay** executable with the addition of an embedded (simple) RPC server. This can receive a single remote procedure call that chages the displayed scrolling text on the screen.
+I'm moving this forward, but still fairly primitive. Currently static and scrolling text displays are available, which can be added and removed via simple python JSON RPC clients.
 
 #building
 I've tried to make it as simple to compile as possible, but this still relies upon having development packages for Gtk and GStreamer being available. I've only built it in LinuxMint16, where the following command _should_ cover all the Package Dependencies:
 
 ```
-sudo apt-get install g++ libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libcairo2-dev libglib2.0-dev libgstreamer-plugins-good1.0-dev
+sudo apt-get install g++ libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libcairo2-dev libglib2.0-dev libgstreamer-plugins-good1.0-dev libpangocairo-1.0-0
 ```
 
 ##libjson-rpc-cpp
@@ -37,85 +37,93 @@ make
 
 Haven't tried to build on Windows yet. In theory it ought to build, but I don't think I'll take the time to do so.
 
-#Modules
-I'll try to describe each executable that is built in turn, from simplest to most complex.
 
-##relay_stream
-This is a basic Gstreamer pipleine that connects to a remote HTTP video+audio stream and relays it to a local TCP server. It also transcodes the stream to TS(h254/mp3), regardless of the original stream container/codecs. An example run is as follows (simply providing the stream URL as the single input argument):
-
-
-###running
+##running video-text-realay
+Run as below. The stream URL is  currently the only argument. TCP Server port is still hard coded to 10000.
 ```
-~/code/VideoTextOverlay/src $ ./relay_stream http://<stream URL>:<PORT>/;stream.nsv
-Received new pad 'src_0' from 'demux':
-  Link succeeded (type 'video/x-raw').
-Received new pad 'src_1' from 'demux':
-  Link succeeded (type 'audio/x-raw').
-```
-At this point, you can connect to the relay via TCP using VLC. The VLC stream url is "tcp://127.0.0.1:10000"
-I've currently hard coded the port to be 10000 as this is just a demo.
-
-##relay_stream_with_overlay
-  This is very similar to the previous executable, but with the addition of a simple superimposed scrolling demo text.
-###running
-Run as below. The stream URL is still the only argument. TCP Server port is still hard coded to 10000.
-```
-./relay_stream_with_overlay http://<stream URL>:<PORT>/;stream.nsv
+./video-text-realay "http://<stream URL>:<PORT>/;stream.nsv"
 [MSG]	Received new pad 'src_0' from 'demux':
 [OK]	Pipeline of type 'video/x-raw' is now online.
 [MSG]	Received new pad 'src_1' from 'demux':
 [OK]	Pipeline of type 'audio/x-raw' is now online.
 
 ```
-You can then connect VLC (and other media players?) to 'TCP://127.0.0.1:10000' and you should see something like the image below.
+You can then connect VLC (and other media players?) to 'TCP://127.0.0.1:10000' and you should pick up the relay (with as yet no text!).
 
 ![Overlay Demo in VLC](https://github.com/on-three/VideoTextOverlay/blob/master/img/Screenshot%20from%202014-04-28%2018:49:00.png?raw=true)
 
 
-## json_rpc_server_test and json_rpc_client_test
-These are two simple applications derived off the example code for the JSON RPC library above. They demonstrate calling a remote procedure (via TCP connection) on the server from the client.
-I'm not going to describe them further here now, but as the json_rpc_client_test exe is used below, i'll describe it there.
+##Adding Text
+In addition to relaying video, the 'video-text-realay' also runs a simple http server that can pick up JSON RPC messages on (currently) port 8080. This allows the correct JSON messages to control the text overlaid on the relayed stream very simply. The required code for clients is fairly simple, and cound conceivably be coded in any language, but I'm currently using python.
 
-## json_rpc_relay
-Okay, this is the basic relay with text overlay demo above, but with the addition of a JSON RPC server. If we use the corect JSON RPC client (which here is C++, but could in theory be in any language, like python or Perl) we can invoke a remote procedure on the server to alter the displayed text.
-This is just a proof of concept, but it does demonstrate where this could be carried. I'll address future work plans below.
+Python scripts to set text on a running relay are available in the /python directory.
 
-### Running
-To actually run this, you've got to run two executables in two shells. One is the relay (as above, providing a single URL as a command line parameter):
+###scrolling_msg
+This python script adds scrolling msg text to the video. Simple command line help is available:
+```
+./python/scrolling_msg -h
+usage: scrolling_msg [-h] [-m MESSAGE] [-u URL] [-f FONT] [-t SCROLL_TIME]
+                     [-l LOOPS] [-y YPOS] [-d]
+                     message_name
+
+Add or remove a scrolling message on a video stream.
+
+positional arguments:
+  message_name          Friendly name to remove/change this message later.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -m MESSAGE, --message MESSAGE
+                        Text to display on video stream scrolling msg
+  -u URL, --url URL     URL of json RPC server to invoke commands on in form
+                        IP:PORT.
+  -f FONT, --font FONT  Pangocairo font family and size.
+  -t SCROLL_TIME, --scroll_time SCROLL_TIME
+                        Time in seconds to scroll text across screen.
+  -l LOOPS, --loops LOOPS
+                        Number of times (loops) to scroll the text. Value 0 is
+                        show forever.
+  -y YPOS, --ypos YPOS  Vertical y pos of scrolling text in pixels.
+  -d, --delete          Delte scrolling message via the provided message name.
 
 ```
- ~/code/VideoTextOverlay/src $ ./json_rpc_relay http:/<STREAM URL>:<PORT>/;stream.nsv
-[MSG]	Received new pad 'src_0' from 'demux':
-[OK]	Pipeline of type 'video/x-raw' is now online.
-[MSG]	Received new pad 'src_1' from 'demux':
-[OK]	Pipeline of type 'audio/x-raw' is now online.
+An example of superimposed video text is shown below.
+
+![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/VideoTextOverlay/e3a66d8a2a544106cd3198091f11d275a18979f8/img/vlcsnap-2014-06-06-16h27m41s56.png)
+
+###static_msg
+This python script can apply staic (non moving) text to a specific location (x,y in pixels) over the relay stream. Simple help is avilable as below:
+```
+./python/static_msg -h
+usage: static_msg [-h] [-m MESSAGE] [-u URL] [-f FONT] [-x XPOS] [-y YPOS]
+                  [-d]
+                  message_name
+
+Add or remove a scrolling message on a video stream.
+
+positional arguments:
+  message_name          Friendly name to remove/change this message later.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -m MESSAGE, --message MESSAGE
+                        Text to display on video stream scrolling msg
+  -u URL, --url URL     URL of json RPC server to invoke commands on in form
+                        IP:PORT.
+  -f FONT, --font FONT  Pangocairo font family and size.
+  -x XPOS, --xpos XPOS  Time in seconds to scroll text across screen.
+  -y YPOS, --ypos YPOS  Vertical y pos of scrolling text in pixels.
+  -d, --delete          Delte scrolling message via the provided message name.
 
 ```
-Then, attach VLC to this relay to view the stream contents.
-
-Lastly, you can now change the screen text by using the **json_rpc_client_test** executable. This takes at least one command line argument, the text you'd like to see superimposed on the screen.
-```
-./json_rpc_client_test "whut. a five second wait???" 100 200 "one"
-```
-
-If we run the above command, we can see the RPC is correctly picked up by our server/relay as additonal debug info is currently dumped to the screen:
-```
-~/code/VideoTextOverlay/src $ ./json_rpc_relay http://<stream URL>:<PORT>/;stream.nsv
-[MSG]	Received new pad 'src_0' from 'demux':
-[OK]	Pipeline of type 'video/x-raw' is now online.
-[MSG]	Received new pad 'src_1' from 'demux':
-[OK]	Pipeline of type 'audio/x-raw' is now online.
-Showing message'whut. a five second wait???' at 100,200 named one
-```
-The results are shown below:
-
-![Overlay Demo in VLC](https://github.com/on-three/VideoTextOverlay/blob/master/img/Screenshot%20from%202014-04-28%2019:57:16.png?raw=true)
+An example of some Staic text can be seen below:
+![Overlay Demo in VLC](https://github.com/on-three/VideoTextOverlay/blob/master/img/Screenshot%20from%202014-04-28%2018:49:00.png?raw=true)
 
 #What Needs to Be Done:
 As stated above, this is fairly primitive, but I believe I've confronted all major hurdles to showing text superimposed upon a relayed video stream.
 The primary outstanding areas where work needs to be done are:
 * Currently these executables relay to local TCP clients (VLC via TCP connection provided by the GStreamer 'tcpsink' element). But a better model to stream to numerous remote clients may be needed. Perhaps 'tcpsink' need be replaced with the GStreamer shoutcast backend? Or their HTTP sink backend? This needs looking into.
 * I've only demonstrated a single RPC call that changes the text on the screen. I'd now have to (re) build code that allows the on-screen text to be manipulated in any number of ways: list boxes, time displays, text displays that use Pango Markup for text colors and weights.
-* The current code, though it works as a demo, is very poor quality. Needs a lot of work.
-* The JSON RPC mechanism cleanly separates relay servers from any possible client. But clients would have to be coded in some language to provide things like live IRC chats and other data.
+* ~~The current code, though it works as a demo, is very poor quality. Needs a lot of work.~~
+* ~~The JSON RPC mechanism cleanly separates relay servers from any possible client. But clients would have to be coded in some language to provide things like live IRC chats and other data.~~
 
