@@ -1,19 +1,8 @@
 [
-    {	//This is how you define a method with named parameters.
-        "method": "ShowMessage",
-        "params": {
-            "msg": "my message",
-						"x": 1,
-						"y": 2,
-						"friendlyName" : "my_message"
-        },
-        "returns": "my_message"
-    },
-
     {   //Create a scrolling message with text "text" and name "name"
         "method": "add_scrolling_msg",
         "params": {
-            "msg": "my message",//text of message (can contain pango markup)
+            "msg": "scrolling message",//text of message (can contain pango markup)
             "font": "Sans Bold 12",//pangocairo style font family description
             "y_pos": 300,//y post of scroll in pixels
             "loop": 0,//0 loops will loop forever. N loop loops N times
@@ -28,5 +17,25 @@
             "friendly_name" : "my_message"//will remove msg previously created with this name
         },
         "returns": "my_message"
+    },
+        {   //Create a simple static message onscreen at pixel coordinates x,y
+        "method": "add_msg",
+        "params": {
+            "msg": "static message",//text of message (can contain pango markup)
+            "font": "Sans Bold 12",//pangocairo style font family description
+            "x": 0,
+            "y": 0,//y post of scroll in pixels
+            "friendly_name" : "my_message"//can call subsequent methods on same msg via this name
+        },
+        "returns": "my_message"
+    },
+    {   //Remove static message named "friendlyname"
+        "method": "remove_msg",
+        "params": {
+            "friendly_name" : "my_message"//will remove msg previously created with this name
+        },
+        "returns": "my_message"
     }
+
+
 ]
