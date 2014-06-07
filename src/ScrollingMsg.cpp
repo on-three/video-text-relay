@@ -115,9 +115,7 @@ void ScrollingMsgController::AddMsg(const int width,
   const double& scroll_time, 
   const int& y_pos)
 {
-  if(m_msgs.find(friendly_name)==m_msgs.end()) {
     m_msgs[friendly_name]=ScrollingMsg(width, height, font, friendly_name, loop, msg, scroll_time, y_pos);
-  }
 }
 
 void ScrollingMsgController::RemoveMsg(const std::string& friendly_name)
