@@ -87,6 +87,13 @@ void StaticMsg::Draw(cairo_t* context, const float dt)
   PangoRectangle ink_rect, logical_rect;
   pango_layout_get_pixel_extents(pango_layout, &ink_rect, &logical_rect);
 
+  //possibly draw a transparent text underlay of fixed color+alpha
+  if(m_underlay) {
+    cairo_set_source_rgba(context, 0.0, 0.0, 0.0, 0.4);
+    cairo_rectangle(context, m_xpos, m_ypos, logical_rect.width, logical_rect.height);
+    cairo_fill(context);
+  }
+
   //possibly draw simple dropshadow to make text readable
   if(m_dropshadow) {
     pango_layout_set_attributes(pango_layout, no_color_attributes);

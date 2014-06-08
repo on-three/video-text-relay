@@ -92,8 +92,6 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
   PangoRectangle ink_rect, logical_rect;
   pango_layout_get_pixel_extents(pango_layout, &ink_rect, &logical_rect);
 
-  //cout<<"text width "<<ink_rect.width<<" "<<logical_rect.width<<endl;
-
   //d_pos = d/t * dt
   m_xpos -= ((m_current_w + ink_rect.width)/m_scroll_time)*dt;
   if(m_xpos<(-1.0f*ink_rect.width)) {//wraparound
@@ -104,10 +102,16 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
     }
   }
 
+  if(m_underlay) {
+    cairo_set_source_rgba(context, 0.0, 0.0, 0.0, 0.4);
+    cairo_rectangle(context, m_xpos, m_ypos, logical_rect.width, logical_rect.height);
+    cairo_fill(context);
+  }
+
   //possibly draw simple dropshadow to make text readable
   if(m_dropshadow) {
     pango_layout_set_attributes(pango_layout, no_color_attributes);
-    cairo_set_source_rgb (context, 0.0, 0.0, 0.0);
+    cairo_set_source_rgb(context, 0.0, 0.0, 0.0);
     cairo_move_to(context, m_xpos+2, m_ypos+2);
     pango_cairo_update_layout(context, pango_layout);
     pango_cairo_show_layout(context, pango_layout);
