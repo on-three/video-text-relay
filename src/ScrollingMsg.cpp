@@ -63,29 +63,6 @@ PangoAttrList* remove_color_attributes(PangoAttrList * const list) {
   PangoAttrList* no_color = pango_attr_list_filter(tmp, filter_colors, NULL);
   pango_attr_list_unref(tmp);
   return no_color;
-  //PangoAttrList* no_color_list = pango_attr_list_copy (list);
-  //PangoAttribute* attr;
-  //GtkTextTag* tag;
-  //gint start, end;
-  //PangoAttrIterator* iter = pango_attr_list_get_iterator(no_color_list);
-  //pango_attr_iterator_range(iter, &start, &end);
-
-  /*
-  do{
-    if(attr = pango_attr_iterator_get(iter, PANGO_ATTR_BACKGROUND)) {
-      cout<<"color attribute"<<endl;
-    }else if(attr = pango_attr_iterator_get(iter, PANGO_ATTR_BACKGROUND)) {
-      //GdkColor col = { 0,
-      //  ((PangoAttrColor*)attr)->color.red,
-      //  ((PangoAttrColor*)attr)->color.green,
-      //  ((PangoAttrColor*)attr)->color.blue
-      cout<<"color attribute"<<endl;
-      };
-
-      //g_object_set(tag, "background-gdk", &col, NULL);
-
-  }while(pango_attr_iterator_next(iter));
-  pango_attr_iterator_destroy(iter);*/
 }
 
 void ScrollingMsg::Draw(cairo_t* context, const float dt)
@@ -100,26 +77,27 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
   PangoAttrList* pTextAttributes = pango_attr_list_new();
   PangoAttrList* no_color_attributes = 0;
   gchar *text = 0;//stupidly gchar disallows deallocation, but it's not locked off in code.
-  pango_parse_markup(m_msg.c_str(),
+  std::string displayed_text = m_msg;
+  if(!pango_parse_markup(m_msg.c_str(),
                     -1,//null terminated text string above
                     0,//no accellerated marker
                     &pTextAttributes,
                     &text,
                     NULL,
-                    NULL);
-  //{
+                    NULL)) 
+  {
+    //Failure to parse markup, so displayed text is empty. Reset it to default text
+    displayed_text = m_msg.c_str();
+  }else{
+    displayed_text = text;
+  }
+
   no_color_attributes = remove_color_attributes(pTextAttributes);
-  pango_layout_set_text(pango_layout, text, -1);
+  pango_layout_set_text(pango_layout, displayed_text.c_str(), -1);
   pango_layout_set_attributes (pango_layout, pTextAttributes);
   pango_layout_set_font_description(pango_layout, pango_fontdesc);
-    
-  //}else{
-  //  pango_layout_set_font_description(pango_layout, pango_fontdesc);
-  //  pango_layout_set_text(pango_layout, m_msg.c_str(), -1);
-  //}
 
 
-  //cairo_text_extents_t te;
   PangoRectangle ink_rect, logical_rect;
   pango_layout_get_pixel_extents(pango_layout, &ink_rect, &logical_rect);
 
