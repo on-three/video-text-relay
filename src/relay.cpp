@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <jsonrpc/rpc.h>
 #include <iostream>
+using std::cout;
+using std::endl;
 
 #include "relay.hpp"
 
@@ -29,6 +31,7 @@ Relay::Relay(const std::string& name, const std::string& uri)
   ,width(0)
   ,height(0)
   ,previous_timestamp(0)
+  ,m_t1(std::chrono::high_resolution_clock::now())
 {
   //TODO: Move to RAII
   m_rpc_server = new VideoOverlayRPCServer();
@@ -246,6 +249,13 @@ void Relay::draw_overlay(GstElement * overlay, cairo_t * cr, guint64 timestamp,
   //time format is in nanoseconds, so we convert to seconds
   const float dt = (timestamp - s->previous_timestamp)/1e9f;
   s->previous_timestamp = timestamp;
+
+  //std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+  //std::chrono::duration<float> delta = std::chrono::duration_cast<std::chrono::duration<float>>(t2 - s->m_t1);
+  //s->m_t1 = t2;
+  //float dt = delta.count()
+
+  //cout<<"duration "<<dt<<endl;
 
   //TODO: abstract these controllers into some generic plugin type.
   s->m_rpc_server->Update(dt);

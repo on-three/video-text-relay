@@ -28,7 +28,8 @@ public:
     const int& loop, 
     const std::string& msg, 
     const double& scroll_time, 
-    const int& y_pos);
+    const int& y_pos,
+    const bool dropshadow);
 
 public:
   int CurrentLoop(void)const{return m_current_loop;};
@@ -48,6 +49,7 @@ private:
   int m_ypos;
   int m_xpos;
   int m_scroll_time;
+  bool m_dropshadow;
 };
 
 class ScrollingMsgController
@@ -63,7 +65,8 @@ public:
     const int& loop, 
     const std::string& msg, 
     const double& scroll_time, 
-    const int& y_pos);
+    const int& y_pos,
+    const bool dropshadow);
   void RemoveMsg(const std::string& friendly_name);
 
 public:

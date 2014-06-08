@@ -15,6 +15,7 @@ Relays HTTP served video stream to TCP/IP
 #include "video_overlay_rpc_server.hpp"
 #include <string>
 #include <cairo.h>
+#include <chrono>
 
 class Relay
 {
@@ -48,12 +49,11 @@ private:
   GstElement *audioconvert;
   GstElement *lamemp3enc;
 
-  //scrolling message
-  //TODO: put this into plugin class(es)
   gboolean valid;
   int width;
   int height;
   guint64 previous_timestamp;
+  std::chrono::high_resolution_clock::time_point m_t1;
   VideoOverlayRPCServer* m_rpc_server;
   
 

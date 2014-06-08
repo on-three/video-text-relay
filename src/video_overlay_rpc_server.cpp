@@ -18,7 +18,7 @@ std::string VideoOverlayRPCServer::add_scrolling_msg(const std::string& font,
   std::lock_guard<std::mutex> l(m_mutex);
 
   m_scrollingMsgController.AddMsg(m_width, m_height,
-    font, friendly_name, loop, msg, scroll_time, y_pos);
+    font, friendly_name, loop, msg, scroll_time, y_pos, true);
   return friendly_name;
 }
 std::string VideoOverlayRPCServer::remove_scrolling_msg(const std::string& friendly_name)
