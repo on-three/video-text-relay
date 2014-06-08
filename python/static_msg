@@ -7,25 +7,6 @@ Desc: add or remove a static message on a video stream via JSON RPC calls
 Author: John O'Neil
 Email: oneil.john@gmail.com
 DATE: Friday, June6th 2014
-
-        {   //Create a simple static message onscreen at pixel coordinates x,y
-        "method": "add_msg",
-        "params": {
-            "msg": "static message",//text of message (can contain pango markup)
-            "font": "Sans Bold 12",//pangocairo style font family description
-            "x": 0,
-            "y": 0,//y post of scroll in pixels
-            "friendly_name" : "my_message"//can call subsequent methods on same msg via this name
-        },
-        "returns": "my_message"
-    },
-    {   //Remove static message named "friendlyname"
-        "method": "remove_msg",
-        "params": {
-            "friendly_name" : "my_message"//will remove msg previously created with this name
-        },
-        "returns": "my_message"
-    }
   
 '''
 
@@ -41,6 +22,8 @@ def main():
   parser.add_argument('-f', '--font', help='Pangocairo font family and size.', type=str, default='Sans Bold 12')
   parser.add_argument('-x', '--xpos', help='Time in seconds to scroll text across screen.', type=int, default=20)
   parser.add_argument('-y', '--ypos', help='Vertical y pos of scrolling text in pixels.', type=int, default=20)
+  parser.add_argument('-s', '--dropshadow', help='Black text dropshadow added.', action='store_true')
+  parser.add_argument('-b', '--underlay', help='Background shaded underlay to make reading clearer.', action='store_true')
   parser.add_argument('-d', '--delete', help='Delte scrolling message via the provided message name.', action='store_true')
 
   args = parser.parse_args()
@@ -60,12 +43,14 @@ def main():
   x = args.xpos
   y = args.ypos
   friendly_name = args.message_name
+  dropshadow = args.dropshadow
+  underlay = args.underlay
 
   if args.delete:
     print 'removing'
     response = http_client.remove_msg(friendly_name=friendly_name)
   else:
-    response = http_client.add_msg(msg=msg, font=font, friendly_name=friendly_name, y=y, x=x)
+    response = http_client.add_msg(msg=msg, font=font, friendly_name=friendly_name, y=y, x=x, dropshadow=dropshadow, underlay=underlay)
 
   print('Response from server: {r}'.format(r=response))
     

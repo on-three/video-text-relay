@@ -7,6 +7,8 @@
             "y_pos": 300,//y post of scroll in pixels
             "loop": 0,//0 loops will loop forever. N loop loops N times
             "scroll_time" : 12.0,//time for message to crall accross screen in seconds
+            "dropshadow" : false,
+            "underlay" : false,
             "friendly_name" : "my_message"//can call subsequent methods on same msg via this name
         },
         "returns": "my_message"
@@ -25,6 +27,8 @@
             "font": "Sans Bold 12",//pangocairo style font family description
             "x": 0,
             "y": 0,//y post of scroll in pixels
+            "dropshadow" : false,
+            "underlay" : false,
             "friendly_name" : "my_message"//can call subsequent methods on same msg via this name
         },
         "returns": "my_message"

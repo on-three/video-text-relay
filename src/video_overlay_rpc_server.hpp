@@ -17,17 +17,21 @@ class VideoOverlayRPCServer : public Abstract_video_overlay_rpc_Server {
 public:
   VideoOverlayRPCServer();
 
-  virtual std::string add_scrolling_msg(const std::string& font, 
+public:
+  virtual std::string add_scrolling_msg(const bool& dropshadow, 
+    const std::string& font, 
     const std::string& friendly_name, 
     const int& loop, 
     const std::string& msg, 
     const double& scroll_time, 
+    const bool& underlay, 
     const int& y_pos);
   virtual std::string remove_scrolling_msg(const std::string& friendly_name);
-  //add/remove a simple, static message to video stream at pos x,y
-  virtual std::string add_msg(const std::string& font,
+  virtual std::string add_msg(const bool& dropshadow, 
+    const std::string& font, 
     const std::string& friendly_name, 
     const std::string& msg, 
+    const bool& underlay, 
     const int& x, const int& y);
   virtual std::string remove_msg(const std::string& friendly_name);
 

@@ -8,17 +8,19 @@ VideoOverlayRPCServer::VideoOverlayRPCServer()
 {
 }
 
-std::string VideoOverlayRPCServer::add_scrolling_msg(const std::string& font, 
-  const std::string& friendly_name, 
-  const int& loop, 
-  const std::string& msg, 
-  const double& scroll_time, 
-  const int& y_pos)
+std::string VideoOverlayRPCServer::add_scrolling_msg(const bool& dropshadow, 
+    const std::string& font, 
+    const std::string& friendly_name, 
+    const int& loop, 
+    const std::string& msg, 
+    const double& scroll_time, 
+    const bool& underlay, 
+    const int& y_pos)
 {
   std::lock_guard<std::mutex> l(m_mutex);
 
   m_scrollingMsgController.AddMsg(m_width, m_height,
-    font, friendly_name, loop, msg, scroll_time, y_pos, true);
+    font, friendly_name, loop, msg, scroll_time, y_pos, dropshadow, underlay);
   return friendly_name;
 }
 std::string VideoOverlayRPCServer::remove_scrolling_msg(const std::string& friendly_name)
@@ -29,17 +31,21 @@ std::string VideoOverlayRPCServer::remove_scrolling_msg(const std::string& frien
   return friendly_name;
 }
 
-std::string VideoOverlayRPCServer::add_msg(const std::string& font,
+std::string VideoOverlayRPCServer::add_msg(const bool& dropshadow, 
+    const std::string& font, 
     const std::string& friendly_name, 
     const std::string& msg, 
-    const int& x, const int& y) {
+    const bool& underlay, 
+    const int& x, const int& y)
+{
 
   std::lock_guard<std::mutex> l(m_mutex);
   m_staticMsgController.AddMsg(m_width, m_height,
       font, 
       friendly_name, 
       msg, 
-      x, y);
+      x, y,
+      dropshadow, underlay);
   
   return friendly_name;
 }

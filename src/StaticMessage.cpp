@@ -9,6 +9,8 @@ StaticMsg::StaticMsg()
   ,m_fontfamily("Sans Bold 12")
   ,m_ypos(0)
   ,m_xpos(0)
+  ,m_dropshadow(false)
+  ,m_underlay(false)
 {
 
 };
@@ -17,7 +19,9 @@ StaticMsg::StaticMsg(const int width,
     const std::string& font, 
     const std::string& friendly_name, 
     const std::string& msg, 
-    const int x, const int y)
+    const int x, const int y,
+    const bool dropshadow,
+    const bool underlay)
   :m_current_w(width)
   ,m_current_h(height)
   ,m_friendly_name(friendly_name)
@@ -25,6 +29,8 @@ StaticMsg::StaticMsg(const int width,
   ,m_fontfamily(font)
   ,m_ypos(y)
   ,m_xpos(x)
+  ,m_dropshadow(dropshadow)
+  ,m_underlay(underlay)
 {
 
 };
@@ -94,9 +100,11 @@ void StaticMsgController::AddMsg(const int width,
     const std::string& font, 
     const std::string& friendly_name, 
     const std::string& msg, 
-    const int x, const int y)
+    const int x, const int y,
+    const bool dropshadow,
+    const bool underlay)
 {
-  m_msgs[friendly_name]=StaticMsg(width, height, font, friendly_name, msg, x, y);
+  m_msgs[friendly_name]=StaticMsg(width, height, font, friendly_name, msg, x, y, dropshadow, underlay);
 }
 
 void StaticMsgController::RemoveMsg(const std::string& friendly_name)

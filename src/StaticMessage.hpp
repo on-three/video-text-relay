@@ -26,7 +26,9 @@ public:
     const std::string& font, 
     const std::string& friendly_name, 
     const std::string& msg, 
-    const int x, const int y);
+    const int x, const int y,
+    const bool dropshadow,
+    const bool underlay);
 
 public:
   void Resize(const int width, const int height);
@@ -40,6 +42,8 @@ private:
   std::string m_fontfamily;
   int m_ypos;
   int m_xpos;
+  bool m_dropshadow;
+  bool m_underlay;
 };
 
 class StaticMsgController
@@ -53,7 +57,8 @@ public:
     const std::string& font, 
     const std::string& friendly_name, 
     const std::string& msg, 
-    const int x, const int y);
+    const int x, const int y,
+    const bool dropshadow, const bool underlay);
   void RemoveMsg(const std::string& friendly_name);
 
 public:

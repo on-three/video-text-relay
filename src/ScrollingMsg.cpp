@@ -16,6 +16,7 @@ ScrollingMsg::ScrollingMsg()
   ,m_xpos(0)
   ,m_scroll_time(12.0f)
   ,m_dropshadow(false)
+  ,m_underlay(false)
 {
 
 };
@@ -27,7 +28,8 @@ ScrollingMsg::ScrollingMsg( const int width,
                             const std::string& msg, 
                             const double& scroll_time,
                             const int& y_pos,
-                            const bool dropshadow)
+                            const bool dropshadow,
+                            const bool underlay)
   :m_current_w(width)
   ,m_current_h(height)
   ,m_friendly_name(friendly_name)
@@ -39,6 +41,7 @@ ScrollingMsg::ScrollingMsg( const int width,
   ,m_xpos(width)
   ,m_scroll_time(scroll_time)
   ,m_dropshadow(dropshadow)
+  ,m_underlay(underlay)
 {
 
 };
@@ -152,9 +155,10 @@ void ScrollingMsgController::AddMsg(const int width,
   const std::string& msg, 
   const double& scroll_time, 
   const int& y_pos,
-  const bool dropshadow)
+  const bool dropshadow,
+  const bool underlay)
 {
-    m_msgs[friendly_name]=ScrollingMsg(width, height, font, friendly_name, loop, msg, scroll_time, y_pos, dropshadow);
+    m_msgs[friendly_name]=ScrollingMsg(width, height, font, friendly_name, loop, msg, scroll_time, y_pos, dropshadow, underlay);
 }
 
 void ScrollingMsgController::RemoveMsg(const std::string& friendly_name)

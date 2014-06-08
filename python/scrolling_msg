@@ -7,26 +7,6 @@ Desc: add or remove a scrolling message on a video stream via JSON RPC calls
 Author: John O'Neil
 Email: oneil.john@gmail.com
 DATE: Thursday, June 5th 2014
-
-    {   //Create a scrolling message with text "text" and name "name"
-        "method": "add_scrolling_msg",
-        "params": {
-            "msg": "my message",//text of message (can contain pango markup)
-            "font": "Sans Bold 12",//pangocairo style font family description
-            "y_pos": 300,//y post of scroll in pixels
-            "loop": 0,//0 loops will loop forever. N loop loops N times
-            "scroll_time" : 12.0,//time for message to crall accross screen in seconds
-            "friendly_name" : "my_message"//can call subsequent methods on same msg via this name
-        },
-        "returns": "my_message"
-    },
-    {   //Remove scrolling message named "friendlyname"
-        "method": "remove_scrolling_msg",
-        "params": {
-            "friendly_name" : "my_message"//will remove msg previously created with this name
-        },
-        "returns": "my_message"
-    }
   
 '''
 
@@ -43,6 +23,8 @@ def main():
   parser.add_argument('-t', '--scroll_time', help='Time in seconds to scroll text across screen.', type=float, default=12.0)
   parser.add_argument('-l', '--loops', help='Number of times (loops) to scroll the text. Value 0 is show forever.', type=int, default=0)
   parser.add_argument('-y', '--ypos', help='Vertical y pos of scrolling text in pixels.', type=int, default=300)
+  parser.add_argument('-s', '--dropshadow', help='Black text dropshadow added.', action='store_true')
+  parser.add_argument('-b', '--underlay', help='Background shaded underlay to make reading clearer.', action='store_true')
   parser.add_argument('-d', '--delete', help='Delte scrolling message via the provided message name.', action='store_true')
 
   args = parser.parse_args()
@@ -62,13 +44,15 @@ def main():
   y_pos = args.ypos
   t = args.scroll_time
   l = args.loops
+  dropshadow = args.dropshadow
+  underlay = args.underlay
   friendly_name = args.message_name
 
   if args.delete:
     print 'removing'
     response = http_client.remove_scrolling_msg(friendly_name=friendly_name)
   else:
-    response = http_client.add_scrolling_msg(msg=msg, font=font, friendly_name=friendly_name, loop=l, y_pos=y_pos, scroll_time=t)
+    response = http_client.add_scrolling_msg(msg=msg, font=font, friendly_name=friendly_name, loop=l, y_pos=y_pos, scroll_time=t, dropshadow=dropshadow, underlay=underlay)
 
   print('Response from server: {r}'.format(r=response))
     
