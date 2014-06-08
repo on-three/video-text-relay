@@ -1,5 +1,6 @@
 #include "ScrollingMsg.hpp"
 #include <pango/pangocairo.h>
+#include "utilities.hpp"
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -55,19 +56,6 @@ void ScrollingMsg::Update(const float dt)
   //TODO: separate update and drawing of msg to facilitate different ordering.
 };
 
-gboolean filter_colors(PangoAttribute *attribute, gpointer user_data)
-{
-  return (attribute->klass->type != PANGO_ATTR_BACKGROUND && 
-    attribute->klass->type != PANGO_ATTR_FOREGROUND);
-}
-
-PangoAttrList* remove_color_attributes(PangoAttrList * const list) {
-  PangoAttrList* tmp = pango_attr_list_copy(list);
-  PangoAttrList* no_color = pango_attr_list_filter(tmp, filter_colors, NULL);
-  pango_attr_list_unref(tmp);
-  return no_color;
-}
-
 void ScrollingMsg::Draw(cairo_t* context, const float dt)
 {
   cairo_save(context);
@@ -95,7 +83,7 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
     displayed_text = text;
   }
 
-  no_color_attributes = remove_color_attributes(pTextAttributes);
+  no_color_attributes = utilities::remove_color_attributes(pTextAttributes);
   pango_layout_set_text(pango_layout, displayed_text.c_str(), -1);
   pango_layout_set_attributes (pango_layout, pTextAttributes);
   pango_layout_set_font_description(pango_layout, pango_fontdesc);
@@ -120,15 +108,14 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
   if(m_dropshadow) {
     pango_layout_set_attributes(pango_layout, no_color_attributes);
     cairo_set_source_rgb (context, 0.0, 0.0, 0.0);
-    cairo_translate(context, m_xpos+2, m_ypos+2);
+    cairo_move_to(context, m_xpos+2, m_ypos+2);
     pango_cairo_update_layout(context, pango_layout);
     pango_cairo_show_layout(context, pango_layout);
   }
 
-  cairo_restore(context);
   pango_layout_set_attributes (pango_layout, pTextAttributes);
   cairo_set_source_rgb (context, 1.0, 1.0, 1.0);
-  cairo_translate(context, m_xpos, m_ypos);
+  cairo_move_to(context, m_xpos, m_ypos);
   pango_cairo_update_layout(context, pango_layout);
   pango_cairo_show_layout(context, pango_layout);
 

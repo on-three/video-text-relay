@@ -1,5 +1,10 @@
 #include "StaticMessage.hpp"
+#include "utilities.hpp"
 #include <pango/pangocairo.h>
+
+#include <iostream>
+using std::cout;
+using std::endl;
 
 StaticMsg::StaticMsg()
   :m_current_w(0)
@@ -43,9 +48,12 @@ void StaticMsg::Update(const float dt)
 {
   //TODO: separate update and drawing of msg to facilitate different ordering.
 };
+
 void StaticMsg::Draw(cairo_t* context, const float dt)
 {
   cairo_save(context);
+
+  //cout<<"msg "<<m_msg<<" at "<<m_xpos<<","<<m_ypos<<endl;
 
   PangoLayout *pango_layout;
   PangoFontDescription *pango_fontdesc;
@@ -53,39 +61,53 @@ void StaticMsg::Draw(cairo_t* context, const float dt)
   pango_layout = pango_cairo_create_layout(context);
   pango_fontdesc = pango_font_description_from_string(m_fontfamily.c_str());
   PangoAttrList* pTextAttributes = pango_attr_list_new();
-  gchar *text = 0;//stupidly gchar disallows deallocation, but not in code
-  if(pango_parse_markup(m_msg.c_str(),
+  PangoAttrList* no_color_attributes = 0;
+  gchar *text = 0;//stupidly gchar disallows deallocation, but it's not locked off in code.
+  std::string displayed_text = m_msg;
+  if(!pango_parse_markup(m_msg.c_str(),
                     -1,//null terminated text string above
                     0,//no accellerated marker
                     &pTextAttributes,
                     &text,
                     NULL,
-                    NULL))
+                    NULL)) 
   {
-    //(relay:30805): Pango-CRITICAL **: pango_layout_set_text: assertion 'length == 0 || text != NULL' failed
-    pango_layout_set_text(pango_layout, text, -1);
-    pango_layout_set_attributes (pango_layout, pTextAttributes);
-    pango_layout_set_font_description(pango_layout, pango_fontdesc);
-    
+    //Failure to parse markup, so displayed text is empty. Reset it to default text
+    displayed_text = m_msg.c_str();
   }else{
-    pango_layout_set_font_description(pango_layout, pango_fontdesc);
-    pango_layout_set_text(pango_layout, m_msg.c_str(), -1);
+    displayed_text = text;
   }
 
+  no_color_attributes = utilities::remove_color_attributes(pTextAttributes);
+  pango_layout_set_text(pango_layout, displayed_text.c_str(), -1);
+  pango_layout_set_attributes (pango_layout, pTextAttributes);
+  pango_layout_set_font_description(pango_layout, pango_fontdesc);
 
-  cairo_text_extents_t te;
-  cairo_set_source_rgb (context, 1.0, 1.0, 1.0);
+
   PangoRectangle ink_rect, logical_rect;
   pango_layout_get_pixel_extents(pango_layout, &ink_rect, &logical_rect);
 
-  cairo_translate(context, m_xpos, m_ypos);
+  //possibly draw simple dropshadow to make text readable
+  if(m_dropshadow) {
+    pango_layout_set_attributes(pango_layout, no_color_attributes);
+    cairo_set_source_rgb (context, 0.0, 0.0, 0.0);
+    cairo_move_to(context, m_xpos+2, m_ypos+2);
+    pango_cairo_update_layout(context, pango_layout);
+    pango_cairo_show_layout(context, pango_layout);
+  }
+
+  pango_layout_set_attributes (pango_layout, pTextAttributes);
+  cairo_set_source_rgb (context, 1.0, 1.0, 1.0);
+  cairo_move_to(context, m_xpos, m_ypos);
   pango_cairo_update_layout(context, pango_layout);
   pango_cairo_show_layout(context, pango_layout);
 
+  //cleanup messy as fuck C api
   pango_attr_list_unref(pTextAttributes);
+  pango_attr_list_unref(no_color_attributes);
   pango_font_description_free(pango_fontdesc);
   g_object_unref(pango_layout);
-  cairo_restore (context);
+  cairo_restore(context);
 }
 
 
