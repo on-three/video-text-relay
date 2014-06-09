@@ -15,6 +15,7 @@ Controller allows multiple messages to be managed.
 #include <string>
 #include <map>
 #include <cairo.h>
+#include <pango/pangocairo.h>
 
 
 class ScrollingMsg
@@ -31,6 +32,8 @@ public:
     const int& y_pos,
     const bool dropshadow,
     const bool underlay);
+  ~ScrollingMsg();
+
 
 public:
   int CurrentLoop(void)const{return m_current_loop;};
@@ -39,6 +42,9 @@ public:
   void Resize(const int width, const int height);
   void Update(const float dt);;
   void Draw(cairo_t* context, const float dt);
+
+private:
+  void LazyInitialization(cairo_t* context);
 
 private:
   int m_current_w, m_current_h;
@@ -52,6 +58,12 @@ private:
   int m_scroll_time;
   bool m_dropshadow;
   bool m_underlay;
+  PangoLayout *pango_layout;
+  PangoFontDescription *pango_fontdesc;
+  PangoAttrList* pTextAttributes;
+  PangoAttrList* no_color_attributes;
+  std::string displayed_text;
+  PangoRectangle ink_rect, logical_rect;
 };
 
 class ScrollingMsgController
