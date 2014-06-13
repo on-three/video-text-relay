@@ -4,8 +4,8 @@
 '''
 Module: json_rpc_client_test.py
 Desc: make json rpc calls on C++ video overlay pipeline
-Author: John O'Neil
-Email: oneil.john@gmail.com
+Author: on_three
+Email: on.three.email@gmail.com
 DATE: Sunday, June 1st 2014
 
 python test to make json rpc calls on video overlay pipeline.

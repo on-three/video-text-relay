@@ -1,6 +1,6 @@
 /*
 file: utilities.hpp
-author: John O'Neil
+author: on_three
 date: Sunday June 8th 2014
 Desc: utilities dealing with GTK, pango, cairo and GStreamer
 */
