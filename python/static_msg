@@ -4,8 +4,8 @@
 '''
 Module: static_msg
 Desc: add or remove a static message on a video stream via JSON RPC calls
-Author: John O'Neil
-Email: oneil.john@gmail.com
+Author: on_three
+Email: on.three.email@gmail.com
 DATE: Friday, June6th 2014
   
 '''
