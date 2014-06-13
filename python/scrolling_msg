@@ -4,8 +4,8 @@
 '''
 Module: scrolling msg
 Desc: add or remove a scrolling message on a video stream via JSON RPC calls
-Author: John O'Neil
-Email: oneil.john@gmail.com
+Author: on_three
+Email: on.three.email@gmail.com
 DATE: Thursday, June 5th 2014
   
 '''
