@@ -6,7 +6,10 @@ SOURCE=relay.cpp video_overlay_rpc_server.cpp main.cpp ScrollingMsg.cpp StaticMe
 HEADERS=relay.hpp abstract_video_overlay_rpc_server.h colors.h threadsafe_queue.hpp video_overlay_rpc_server.hpp ScrollingMsg.hpp StaticMessage.hpp utilities.hpp
 EXE=video-text-relay
 
-all: video-text-relay
+all: video-text-relay debug
+
+debug: $(SOURCE) $(HEADERS)
+	$(COMPILER) $(FLAGS) -g $(INCLUDES) $(SOURCE) $(LIBS) -ljsonrpc -o $(EXE)-debug
 
 rebuild: clean all
 
