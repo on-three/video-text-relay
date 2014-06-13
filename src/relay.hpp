@@ -1,6 +1,6 @@
 /*
 Relay.hpp
-John O'Neil
+on_three
 Sunday, June 1st 2014
 
 Refactor of existing C gstreamer pipeline to C++
