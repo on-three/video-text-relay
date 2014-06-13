@@ -1,6 +1,6 @@
 /*
 StaticMsg.hpp
-John O'Neil
+on_three
 Tuesday, June 3rd 2014
 
 Static msg display superimposed on video stream.
