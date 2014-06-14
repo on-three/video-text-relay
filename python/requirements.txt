@@ -1,6 +1,11 @@
 Twisted==14.0.0
 argparse==1.2.1
 bunch==1.0.1
+cffi==0.8.2
+cryptography==0.4
+pyOpenSSL==0.14
+pycparser==2.10
 python-jsonrpc==0.3.4
+six==1.7.2
 wsgiref==0.1.2
 zope.interface==4.1.1
