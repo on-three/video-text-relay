@@ -54,7 +54,7 @@ bool ScrollingMsg::Update(const float dt)
     m_current_loop += 1;
   }
   m_text.X(xpos);
-  return (m_loops > 0 && m_current_loop >= m_loops);
+  return (m_loops > 0 && m_current_loop > m_loops);
 };
 
 void ScrollingMsg::Draw(cairo_t* context, const float dt)
