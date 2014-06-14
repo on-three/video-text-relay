@@ -40,7 +40,7 @@ public:
   void Initialize(void);
   void Resize(const int width, const int height);
   void Update(float dt);
-  void Draw(cairo_t * cr, float dt);
+  void Draw(cairo_t * cr);
 private:
   ScrollingMsgController m_scrollingMsgController;
   StaticMsgController m_staticMsgController;

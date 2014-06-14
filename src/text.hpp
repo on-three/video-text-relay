@@ -31,7 +31,7 @@ public:
 
 public:
   bool Update(const float dt);
-  void Draw(cairo_t* context, const float dt);
+  void Draw(cairo_t* context);
 
 public:
   int X(void)const{return m_xpos;};

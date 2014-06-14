@@ -35,7 +35,7 @@ StaticMsg::StaticMsg(const int width,
 };
 
 StaticMsg::~StaticMsg() {
-  
+
 }
 
 void StaticMsg::Resize(const int width, const int height) {
@@ -56,9 +56,9 @@ bool StaticMsg::Update(const float dt)
   return false;
 }
 
-void StaticMsg::Draw(cairo_t* context, const float dt)
+void StaticMsg::Draw(cairo_t* context)
 {
-  m_text.Draw(context, dt);
+  m_text.Draw(context);
 }
 
 
@@ -101,11 +101,11 @@ void StaticMsgController::Update(float dt) {
     }
   }
 };
-void StaticMsgController::Draw(cairo_t* context, const float dt) {
+void StaticMsgController::Draw(cairo_t* context) {
   for(std::map< std::string, StaticMsg >::iterator imsg=m_msgs.begin();
     imsg!=m_msgs.end(); ++imsg)
   {
-    imsg->second.Draw(context, dt);
+    imsg->second.Draw(context);
   }
 }
 

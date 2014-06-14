@@ -65,7 +65,7 @@ bool Text::Update(const float dt) {
   return true;
 }
 
-void Text::Draw(cairo_t* context, const float dt) {
+void Text::Draw(cairo_t* context) {
 
   LazyInitialization(context);
 

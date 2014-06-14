@@ -57,9 +57,9 @@ bool ScrollingMsg::Update(const float dt)
   return (m_loops > 0 && m_current_loop > m_loops);
 };
 
-void ScrollingMsg::Draw(cairo_t* context, const float dt)
+void ScrollingMsg::Draw(cairo_t* context)
 {
-  m_text.Draw(context, dt);
+  m_text.Draw(context);
 }
 
 
@@ -102,11 +102,11 @@ void ScrollingMsgController::Update(float dt) {
     }
   }
 };
-void ScrollingMsgController::Draw(cairo_t* context, const float dt) {
+void ScrollingMsgController::Draw(cairo_t* context) {
   for(std::map< std::string, ScrollingMsg >::iterator imsg=m_msgs.begin();
     imsg!=m_msgs.end(); ++imsg)
   {
-    imsg->second.Draw(context, dt);
+    imsg->second.Draw(context);
   }
 }
 

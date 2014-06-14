@@ -75,12 +75,12 @@ void VideoOverlayRPCServer::Update(float dt) {
   m_scrollingMsgController.Update(dt);
   m_staticMsgController.Update(dt);
 }
-void VideoOverlayRPCServer::Draw(cairo_t * cr, float dt) {
+void VideoOverlayRPCServer::Draw(cairo_t * cr) {
   if(m_width==0 or m_height==0) {
     return;
   }
   //TODO: better handling for layering of text
   std::lock_guard<std::mutex> l(m_mutex);
-  m_scrollingMsgController.Draw(cr, dt);
-  m_staticMsgController.Draw(cr, dt);
+  m_scrollingMsgController.Draw(cr);
+  m_staticMsgController.Draw(cr);
 }

@@ -36,8 +36,8 @@ public:
 
 public:
   void Resize(const int width, const int height);
-  bool Update(const float dt);;
-  void Draw(cairo_t* context, const float dt);
+  bool Update(const float dt);
+  void Draw(cairo_t* context);
 
 private:
   int m_current_w, m_current_h;
@@ -65,7 +65,7 @@ public:
 
 public:
   void Update(float dt);
-  void Draw(cairo_t* context, const float dt);
+  void Draw(cairo_t* context);
   void Resize(const int width, const int height);
 
 private:
