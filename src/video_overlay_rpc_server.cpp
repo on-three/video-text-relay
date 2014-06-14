@@ -34,7 +34,8 @@ std::string VideoOverlayRPCServer::remove_scrolling_msg(const std::string& frien
 std::string VideoOverlayRPCServer::add_msg(const bool& dropshadow, 
     const std::string& font, 
     const std::string& friendly_name, 
-    const std::string& msg, 
+    const std::string& msg,
+    const double& timeout,
     const bool& underlay, 
     const int& x, const int& y)
 {
@@ -45,6 +46,7 @@ std::string VideoOverlayRPCServer::add_msg(const bool& dropshadow,
       friendly_name, 
       msg, 
       x, y,
+      static_cast<float>(timeout),
       dropshadow, underlay);
   
   return friendly_name;

@@ -22,6 +22,7 @@ def main():
   parser.add_argument('-f', '--font', help='Pangocairo font family and size.', type=str, default='Sans Bold 12')
   parser.add_argument('-x', '--xpos', help='Time in seconds to scroll text across screen.', type=int, default=20)
   parser.add_argument('-y', '--ypos', help='Vertical y pos of scrolling text in pixels.', type=int, default=20)
+  parser.add_argument('-t', '--timeout', help='Show message for X seconds.', type=float, default=0.0)
   parser.add_argument('-s', '--dropshadow', help='Black text dropshadow added.', action='store_true')
   parser.add_argument('-b', '--underlay', help='Background shaded underlay to make reading clearer.', action='store_true')
   parser.add_argument('-d', '--delete', help='Delte scrolling message via the provided message name.', action='store_true')
@@ -45,12 +46,13 @@ def main():
   friendly_name = args.message_name
   dropshadow = args.dropshadow
   underlay = args.underlay
+  timeout = args.timeout
 
   if args.delete:
     print 'removing'
     response = http_client.remove_msg(friendly_name=friendly_name)
   else:
-    response = http_client.add_msg(msg=msg, font=font, friendly_name=friendly_name, y=y, x=x, dropshadow=dropshadow, underlay=underlay)
+    response = http_client.add_msg(msg=msg, font=font, friendly_name=friendly_name, y=y, x=x, timeout=timeout, dropshadow=dropshadow, underlay=underlay)
 
   print('Response from server: {r}'.format(r=response))
     

@@ -40,7 +40,7 @@ public:
 
 public:
   void Resize(const int width, const int height);
-  void Update(const float dt);;
+  bool Update(const float dt);
   void Draw(cairo_t* context, const float dt);
 
 private:

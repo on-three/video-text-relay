@@ -27,11 +27,12 @@ public:
     const bool& underlay, 
     const int& y_pos);
   virtual std::string remove_scrolling_msg(const std::string& friendly_name);
-  virtual std::string add_msg(const bool& dropshadow, 
-    const std::string& font, 
-    const std::string& friendly_name, 
-    const std::string& msg, 
-    const bool& underlay, 
+  virtual std::string add_msg(const bool& dropshadow,
+    const std::string& font,
+    const std::string& friendly_name,
+    const std::string& msg,
+    const double& timeout,
+    const bool& underlay,
     const int& x, const int& y);
   virtual std::string remove_msg(const std::string& friendly_name);
 

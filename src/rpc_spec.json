@@ -29,6 +29,7 @@
             "y": 0,//y post of scroll in pixels
             "dropshadow" : false,
             "underlay" : false,
+            "timeout" : 0.0,
             "friendly_name" : "my_message"//can call subsequent methods on same msg via this name
         },
         "returns": "my_message"

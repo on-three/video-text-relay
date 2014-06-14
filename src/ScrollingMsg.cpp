@@ -76,9 +76,9 @@ void ScrollingMsg::Resize(const int width, const int height) {
   m_current_w = width;
   m_current_h = height;
 };
-void ScrollingMsg::Update(const float dt)
+bool ScrollingMsg::Update(const float dt)
 {
-  //TODO: separate update and drawing of msg to facilitate different ordering.
+  return (m_loops > 0 && m_current_loop >= m_loops);
 };
 
 void ScrollingMsg::LazyInitialization(cairo_t* context)
@@ -122,9 +122,6 @@ void ScrollingMsg::Draw(cairo_t* context, const float dt)
   if(m_xpos<(-1.0f*ink_rect.width)) {//wraparound
     m_xpos = m_current_w;
     m_current_loop += 1;
-    if(m_current_loop==m_loops) {
-      m_current_loop = -1;//indicates controller should remove this msg.
-    }
   }
 
   //possibly draw a transparent text underlay of fixed color+alpha
@@ -186,9 +183,7 @@ void ScrollingMsgController::Update(float dt) {
   for(std::map< std::string, ScrollingMsg >::iterator imsg=m_msgs.begin();
     imsg!=m_msgs.end();)
   {
-    imsg->second.Update(dt);
-    //remove those msgs that are 'done'
-    if(imsg->second.CurrentLoop()<0) {
+    if(imsg->second.Update(dt)) {
       imsg = m_msgs.erase(imsg);
     }else{
       ++imsg;

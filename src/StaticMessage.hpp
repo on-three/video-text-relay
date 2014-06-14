@@ -28,13 +28,14 @@ public:
     const std::string& friendly_name, 
     const std::string& msg, 
     const int x, const int y,
+    const float timeout,
     const bool dropshadow,
     const bool underlay);
   ~StaticMsg();
 
 public:
   void Resize(const int width, const int height);
-  void Update(const float dt);;
+  bool Update(const float dt);;
   void Draw(cairo_t* context, const float dt);
 
 private:
@@ -49,6 +50,8 @@ private:
   int m_xpos;
   bool m_dropshadow;
   bool m_underlay;
+  float m_elapsedtime;
+  float m_timeout;
   PangoLayout *pango_layout;
   PangoFontDescription *pango_fontdesc;
   PangoAttrList* pTextAttributes;
@@ -69,6 +72,7 @@ public:
     const std::string& friendly_name, 
     const std::string& msg, 
     const int x, const int y,
+    const float timeout,
     const bool dropshadow, const bool underlay);
   void RemoveMsg(const std::string& friendly_name);
 

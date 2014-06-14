@@ -15,6 +15,8 @@ StaticMsg::StaticMsg()
   ,m_xpos(0)
   ,m_dropshadow(false)
   ,m_underlay(false)
+  ,m_elapsedtime(0.0f)
+  ,m_timeout(0.0f)
   ,pango_layout(0)
   ,pango_fontdesc(0)
   ,pTextAttributes(0)
@@ -29,6 +31,7 @@ StaticMsg::StaticMsg(const int width,
     const std::string& friendly_name, 
     const std::string& msg, 
     const int x, const int y,
+    const float timeout,
     const bool dropshadow,
     const bool underlay)
   :m_current_w(width)
@@ -40,6 +43,8 @@ StaticMsg::StaticMsg(const int width,
   ,m_xpos(x)
   ,m_dropshadow(dropshadow)
   ,m_underlay(underlay)
+  ,m_elapsedtime(0.0f)
+  ,m_timeout(timeout)
   ,pango_layout(0)
   ,pango_fontdesc(0)
   ,pTextAttributes(0)
@@ -102,9 +107,13 @@ void StaticMsg::LazyInitialization(cairo_t* context)
   pango_layout_get_pixel_extents(pango_layout, &ink_rect, &logical_rect);
 }
 
-void StaticMsg::Update(const float dt)
+bool StaticMsg::Update(const float dt)
 {
-  //TODO: separate update and drawing of msg to facilitate different ordering.
+  m_elapsedtime += dt;
+  if(m_timeout>0.0f && m_elapsedtime>m_timeout) {
+    return true;
+  }
+  return false;
 }
 
 void StaticMsg::Draw(cairo_t* context, const float dt)
@@ -151,10 +160,11 @@ void StaticMsgController::AddMsg(const int width,
     const std::string& friendly_name, 
     const std::string& msg, 
     const int x, const int y,
+    const float timeout,
     const bool dropshadow,
     const bool underlay)
 {
-  m_msgs[friendly_name]=StaticMsg(width, height, font, friendly_name, msg, x, y, dropshadow, underlay);
+  m_msgs[friendly_name]=StaticMsg(width, height, font, friendly_name, msg, x, y, timeout, dropshadow, underlay);
 }
 
 void StaticMsgController::RemoveMsg(const std::string& friendly_name)
@@ -170,13 +180,11 @@ void StaticMsgController::Update(float dt) {
   for(std::map< std::string, StaticMsg >::iterator imsg=m_msgs.begin();
     imsg!=m_msgs.end();)
   {
-    imsg->second.Update(dt);
-    //remove those msgs that are 'done'
-    //if(imsg->second.CurrentLoop()<0) {
-    //  imsg = m_msgs.erase(imsg);
-    //}else{
+    if(imsg->second.Update(dt)) {
+      imsg = m_msgs.erase(imsg);
+    }else{
       ++imsg;
-    //}
+    }
   }
 };
 void StaticMsgController::Draw(cairo_t* context, const float dt) {
