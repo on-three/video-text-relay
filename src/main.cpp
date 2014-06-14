@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
   gst_init (&argc, &argv);
 
   std::string url = "";
+  int relay_port = 10000;
+  int jsonrpc_port = 8080;
   try {
     TCLAP::CmdLine cmd("********relay-stream-with-overlay********"
     BOLDWHITE "Video stream realy with json RPC text overlay server." RESET
@@ -33,16 +35,35 @@ int main(int argc, char *argv[]) {
      "0.1a"); //version of program
 
     //primary positional arg is the URL of the video stream.
-    //TCLAP::UnlabeledValueArg< std::string >  stream_url( "url", "URL of video stream to relay.", true, "std::string");
     TCLAP::UnlabeledValueArg< std::string > stream_url(std::string("url"),
       std::string("URL of video stream to relay."),
       true,//required
       std::string(""),
-      std::string("URL of video stream to realay"));
+      std::string("URL of video stream to relay"));
     cmd.add(stream_url);
+
+    //TCP port we'll relay on (i.e. clients can connect to)
+    TCLAP::ValueArg<int> relay_port_option(std::string("p"),
+      std::string("realy_port"),
+      std::string("Port TCP clients can connect to to receive relayed, transcoded, decorated video stream."),
+      false,//not required
+      10000,//default value
+      std::string("port number"));
+    cmd.add(relay_port_option);
+
+  //TCP port we'll accept json-rpc commands on
+    TCLAP::ValueArg<int> jsonrpc_port_option(std::string("j"),
+      std::string("jsonrpc_port"),
+      std::string("Port TCP clients can pass JSON RPC commands to display text atop stream."),
+      false,//not required
+      8080,//default value
+      std::string("port number"));
+    cmd.add(jsonrpc_port_option);
 
     cmd.parse(argc, argv);
     url = stream_url.getValue();
+    jsonrpc_port = jsonrpc_port_option.getValue();
+    relay_port = relay_port_option.getValue();
 
   } catch (TCLAP::ArgException &e)  {
     std::cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
@@ -50,7 +71,7 @@ int main(int argc, char *argv[]) {
   }
 
   try {
-    Relay relay(std::string("my_relay"), url);
+    Relay relay(std::string("my_relay"), url, relay_port, jsonrpc_port);
 
     relay.Initialize();
     relay.Run();

@@ -12,9 +12,12 @@ using std::endl;
 #include "colors.h"
 
 
-Relay::Relay(const std::string& name, const std::string& uri)
+Relay::Relay(const std::string& name, const std::string& uri
+  ,const int relay_port, const int json_rpc_port)
   :m_name(name)
   ,m_uri(uri)
+  ,m_relay_port(relay_port)
+  ,m_jsonrpc_port(json_rpc_port)
   ,m_rpc_server(0)
   ,pipeline(0)
   ,bus(0)
@@ -34,7 +37,7 @@ Relay::Relay(const std::string& name, const std::string& uri)
   ,m_t1(std::chrono::high_resolution_clock::now())
 {
   //TODO: Move to RAII
-  m_rpc_server = new VideoOverlayRPCServer();
+  m_rpc_server = new VideoOverlayRPCServer(m_jsonrpc_port);
 }
 
 Relay::~Relay() {
@@ -113,7 +116,7 @@ bool Relay::Initialize(void) {
   }
 
   g_object_set(demux, "uri", m_uri.c_str(), NULL);
-  g_object_set(tcpsink, "port", 10000, NULL);
+  g_object_set(tcpsink, "port", m_relay_port, NULL);
   
   /* Connect to the pad-added signal */
   g_signal_connect(demux, "pad-added", G_CALLBACK (Relay::pad_added_handler), this);

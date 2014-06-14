@@ -15,7 +15,7 @@ using namespace jsonrpc;
 
 class VideoOverlayRPCServer : public Abstract_video_overlay_rpc_Server {
 public:
-  VideoOverlayRPCServer();
+  VideoOverlayRPCServer(const int port=8080);
 
 public:
   virtual std::string add_scrolling_msg(const bool& dropshadow, 

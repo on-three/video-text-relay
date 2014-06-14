@@ -1,8 +1,8 @@
 #include "video_overlay_rpc_server.hpp"
 
 
-VideoOverlayRPCServer::VideoOverlayRPCServer()
-  :Abstract_video_overlay_rpc_Server(new HttpServer(8080))
+VideoOverlayRPCServer::VideoOverlayRPCServer(const int port)
+  :Abstract_video_overlay_rpc_Server(new HttpServer(port))
   ,m_width(0)
   ,m_height(0)
 {

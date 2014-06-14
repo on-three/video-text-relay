@@ -20,7 +20,8 @@ Relays HTTP served video stream to TCP/IP
 class Relay
 {
 public:
-  Relay(const std::string& name, const std::string& uri);
+  Relay(const std::string& name, const std::string& uri,
+    const int relay_port, const int jsonrpc_port);
   ~Relay();
 
 public:
@@ -35,6 +36,8 @@ public:
 private:
   const std::string m_name;
   const std::string m_uri;
+  const int m_relay_port;
+  const int m_jsonrpc_port;
 
   //Pipeline elements
   GstBus *bus;
