@@ -1,0 +1,194 @@
+#!/usr/bin/env python
+# vim: set ts=2 expandtab:
+'''
+Module: irc-client
+Desc: Simple irc client driving video overlay
+Author: on_three  
+Email: on.three.email@gmail.com
+DATE: Tuesday, Dec 24th 2013
+
+This is based on the old twisted IRC client 'scaffold' which
+is weird, but fine.
+
+'''
+
+import pyjsonrpc
+import re
+import sys
+import unicodedata
+from twisted.internet import reactor
+from twisted.internet import protocol
+from twisted.internet import ssl
+from twisted.python import log
+from twisted.words.protocols import irc as twisted_irc
+#from huplo.color import Color
+#import dbus
+import argparse
+from traceback import print_exc
+import sys
+#import jsonpickle
+#from huplo.chat_display import Chat
+#from huplo.text import Text
+import string
+import irc_utilities
+#import pyjsonrpc
+import random
+
+DEFAULT_IRC_PORT = 6660
+DEFAULT_JSON_RPC_PORT = 8080
+
+
+class IRCClient(twisted_irc.IRCClient):
+  def connectionMade(self):
+    twisted_irc.IRCClient.connectionMade(self)
+
+  def connectionLost(self, reason):
+    twisted_irc.IRCClient.connectionLost(self, reason)
+
+  def signedOn(self):
+    '''
+    Called when we've connected to the IRC server.
+    We can use this opportunity to communicate with nickserv
+    if necessary
+    '''
+    network = self.factory.network
+
+    if network['identity']['nickserv_pw']:
+      self.msg('NickServ', 
+            'IDENTIFY %s' % network['identity']['nickserv_pw'])
+
+    for channel in network['autojoin']:
+      print('join channel %s' % channel)
+      self.join(channel)
+
+  def joined(self, channel):
+    '''
+    Called when we've joined a channel. This is here used to
+    Initialize a chat dialog on the screen that will later
+    be updated with posts as the chat progresses.
+    '''
+    print "joined {channel}".format(channel=channel)
+    #chat = Chat(show_shading=True)
+    #pickled = jsonpickle.encode(chat)
+    #self.chat_iface.add_chat(unicode(channel), unicode(pickled))
+
+  def privmsg(self, user, channel, msg):
+    '''
+    Invoked upon receipt of a message in channel X.
+    Here it's used to pass chat posts to video overlay via dbus
+    '''
+    nick, vhost = irc_utilities.split_speaker(user)
+    #According to best practice, decod all encoded strings to unicode as early as possible
+    #msg = irc.decode(msg)
+    msg = irc_utilities.formatting_to_pango_markup(msg)
+    print msg
+    #msg = msg.encode('utf-8')#reencode before display
+    #TODO: send JSON command to display msg on video stream
+    y_pos = random.randint(10, 350)
+    try:
+      self.factory.rpc.add_scrolling_msg(msg=msg, font='Sans Bold 12', friendly_name="one", loop=1, y_pos=y_pos, scroll_time=10.0, dropshadow=True, underlay=False)
+    except pyjsonrpc.rpcerror.InvalidParams as e:
+      print 'JSON RPC ERROR: ' + str(e)
+
+
+  def irc_RPL_TOPIC(self, prefix, params):
+    '''
+    Called when the topic for a channel is initially reported or when it      subsequently changes.
+    params[0] is your nick
+    params[1] is channel joined
+    params[2] is topic for channel
+
+    '''
+    channel = params[1]
+    topic = params[2]
+    topic = irc_utilities.formatting_to_pango_markup(topic)
+
+
+  def alterCollidedNick(self, nickname):
+      return nickname+'_'
+
+class IRCClientFactory(protocol.ClientFactory):
+  protocol = IRCClient
+
+  def __init__(self, network_name, network, json_rpc_host='http://localhost:8080'):
+    self.network_name = network_name
+    self.network = network
+    self.rpc = pyjsonrpc.HttpClient(
+      url = json_rpc_host,
+      #username = 'Username',
+      #password = 'Password',
+    )
+
+  def clientConnectionLost(self, connector, reason):
+    connector.connect()
+
+  def clientConnectionFailed(self, connector, reason):
+    reactor.stop()
+
+def split_server_port(hostname):
+  hostname, port = string.split(hostname, ':', maxsplit=1)
+  if not port:
+    port = DEFAULT_IRC_PORT
+  else:
+    try:
+      port = int(port)
+    except ValueError:
+      port = DEFAULT_IRC_PORT
+  return (hostname, port)
+
+def main():
+  parser = argparse.ArgumentParser(description='Inject IRC channel into video stream.')
+  parser.add_argument('hostname', help='IRC server URL as domain:port (e.g. www.freenode.net:6660).', type=str)
+  parser.add_argument('nickname', help='Nick to use at signon. Multiple nicks not yet supported.', type=str)
+  parser.add_argument('channel', help='Channel to join on server', type=str)
+  parser.add_argument('-u', '--username', help='Username to use at signon.', type=str, default='')
+  parser.add_argument('-r', '--realname', help='Realname to use at signon.', type=str, default='')
+  parser.add_argument('-p', '--password', help='Optional password to use at signon', type=str, default=None)
+  parser.add_argument('-x', '--x_pos', help='x position of chat box on screen in pixels.', default=20, type=int)
+  parser.add_argument('-y', '--y_pos', help='y position of chat box on screen in pixels.', default=400,type=int)
+  parser.add_argument('-w', '--width', help='Max width of chat text box colum in pixels.', default=200, type=int)
+  parser.add_argument('-m', '--max_posts', help='Max number of chat box posts shown.', default=10, type=int)
+  parser.add_argument('-b', '--background', help='Show shaded background behind text', action="store_true")
+  parser.add_argument('-v', '--verbose', help='Log debug info to screen', action="store_true")
+  parser.add_argument('-s', '--ssl', help='Connect to server via SSL.', action="store_true")
+  args = parser.parse_args()
+  
+  hostname, port = split_server_port(args.hostname)
+  if args.verbose:
+    print 'Connecting to ' + hostname + ' on port ' + str(port) +'.'
+  
+  credentials = {
+      'nickname': args.nickname,
+      'realname': args.realname if len(args.realname)>0 else args.nickname,
+      'username': args.username if len(args.username)>0 else args.nickname,
+      'nickserv_pw': args.password
+  }
+  #we've got to add thise to the client, which is odd as fuq
+  IRCClient.nickname = credentials['nickname']
+  IRCClient.realname = credentials['realname']
+  IRCClient.username = credentials['username']
+  IRCClient.password = credentials['nickserv_pw']
+  
+  channels = (args.channel,)
+
+  network = {
+      'host': hostname,
+      'port': port,
+      'ssl': args.ssl,
+      'identity': credentials,
+      'autojoin': channels
+  }
+
+  factory = IRCClientFactory(hostname, network)
+  if args.ssl:
+    reactor.connectSSL(hostname, port, factory, ssl.ClientContextFactory())
+  else:
+    reactor.connectTCP(hostname, port, factory)
+
+  reactor.run()
+
+
+if __name__ == '__main__':
+  main() 
+
+

@@ -1,0 +1,6 @@
+Twisted==14.0.0
+argparse==1.2.1
+bunch==1.0.1
+python-jsonrpc==0.3.4
+wsgiref==0.1.2
+zope.interface==4.1.1
