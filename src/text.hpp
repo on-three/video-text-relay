@@ -39,7 +39,7 @@ public:
   int Y(void)const{return m_ypos;};
   void Y(const int y){m_ypos=y;};
 
-private:
+public:
   void LazyInitialization(cairo_t* context);
 
 private:

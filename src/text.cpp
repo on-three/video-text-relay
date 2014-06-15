@@ -1,5 +1,8 @@
 #include "text.hpp"
 #include "utilities.hpp"
+#include <iostream>
+using std::cout;
+using std::endl;
 
 namespace overlay
 {
@@ -54,10 +57,16 @@ Text::~Text() {
 }
 
 int Text::width(void)const {
+  if(!pango_layout) {
+    return -1;
+  }
   return logical_rect.width;
 }
 int Text::height(void)const {
-  logical_rect.height;
+  if(!pango_layout) {
+    return -1;
+  }
+  return logical_rect.height;
 }
 
 //void Resize(const int width, const int height);

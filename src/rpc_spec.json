@@ -40,6 +40,16 @@
             "friendly_name" : "my_message"//will remove msg previously created with this name
         },
         "returns": "my_message"
+    },
+        {   //generic IRC display add private msg
+            //the display itself will decide how this is displayed
+        "method": "irc_privmsg",
+        "params": {
+            "msg" : "msg",//will remove msg previously created with this name
+            "nick" : "nick",
+            "channel" : "#channel"
+        },
+        "returns": "my_message"
     }
 
 

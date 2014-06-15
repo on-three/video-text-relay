@@ -2,11 +2,11 @@ COMPILER=g++
 INCLUDES=`pkg-config --cflags glib-2.0 gstreamer-1.0 cairo` -I/usr/include/pango-1.0
 LIBS=`pkg-config --libs glib-2.0 gstreamer-1.0 cairo pangocairo` -lgstvideo-1.0
 FLAGS=-std=c++11
-SOURCE=relay.cpp video_overlay_rpc_server.cpp main.cpp ScrollingMsg.cpp StaticMessage.cpp utilities.cpp text.cpp
-HEADERS=relay.hpp abstract_video_overlay_rpc_server.h colors.h threadsafe_queue.hpp video_overlay_rpc_server.hpp ScrollingMsg.hpp StaticMessage.hpp utilities.hpp text.hpp
+SOURCE=relay.cpp video_overlay_rpc_server.cpp main.cpp ScrollingMsg.cpp StaticMessage.cpp utilities.cpp text.cpp NikoNikoDisplay.cpp
+HEADERS=relay.hpp abstract_video_overlay_rpc_server.h colors.h threadsafe_queue.hpp video_overlay_rpc_server.hpp ScrollingMsg.hpp StaticMessage.hpp utilities.hpp text.hpp NikoNikoDisplay.hpp
 EXE=video-text-relay
 
-all: video-text-relay debug
+all: $(EXE)
 
 debug: $(SOURCE) $(HEADERS)
 	$(COMPILER) $(FLAGS) -g $(INCLUDES) $(SOURCE) $(LIBS) -ljsonrpc -o $(EXE)-debug

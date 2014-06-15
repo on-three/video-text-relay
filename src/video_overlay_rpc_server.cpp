@@ -59,12 +59,24 @@ std::string VideoOverlayRPCServer::remove_msg(const std::string& friendly_name) 
   return friendly_name;
 }
 
+std::string VideoOverlayRPCServer::irc_privmsg(const std::string& channel, 
+  const std::string& msg,
+  const std::string& nick)
+{
+  m_nikoNikoMsgController.AddMsg(m_width, m_height,
+    msg,
+    nick,
+    channel);
+  return channel;
+}
+
 void VideoOverlayRPCServer::Resize(const int width, const int height)
 {
   m_width = width;
   m_height = height;
   m_scrollingMsgController.Resize(width, height);
   m_staticMsgController.Resize(width, height);
+  m_nikoNikoMsgController.Resize(width, height);
 }
 
 void VideoOverlayRPCServer::Initialize(void) {
@@ -74,6 +86,7 @@ void VideoOverlayRPCServer::Update(float dt) {
   std::lock_guard<std::mutex> l(m_mutex);
   m_scrollingMsgController.Update(dt);
   m_staticMsgController.Update(dt);
+  m_nikoNikoMsgController.Update(dt);
 }
 void VideoOverlayRPCServer::Draw(cairo_t * cr) {
   if(m_width==0 or m_height==0) {
@@ -83,4 +96,5 @@ void VideoOverlayRPCServer::Draw(cairo_t * cr) {
   std::lock_guard<std::mutex> l(m_mutex);
   m_scrollingMsgController.Draw(cr);
   m_staticMsgController.Draw(cr);
+  m_nikoNikoMsgController.Draw(cr);
 }

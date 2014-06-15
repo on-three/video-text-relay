@@ -86,7 +86,7 @@ class IRCClient(twisted_irc.IRCClient):
     #TODO: send JSON command to display msg on video stream
     y_pos = random.randint(10, 350)
     try:
-      self.factory.rpc.add_scrolling_msg(msg=msg, font='Sans Bold 12', friendly_name="one", loop=1, y_pos=y_pos, scroll_time=10.0, dropshadow=True, underlay=False)
+      self.factory.rpc.irc_privmsg(msg=msg, nick=user, channel=channel)
     except pyjsonrpc.rpcerror.InvalidParams as e:
       print 'JSON RPC ERROR: ' + str(e)
 

@@ -15,6 +15,7 @@ class Abstract_video_overlay_rpc_Server : public jsonrpc::AbstractServer<Abstrac
         {
             this->bindAndAddMethod(new jsonrpc::Procedure("add_msg", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "dropshadow",jsonrpc::JSON_BOOLEAN,"font",jsonrpc::JSON_STRING,"friendly_name",jsonrpc::JSON_STRING,"msg",jsonrpc::JSON_STRING,"timeout",jsonrpc::JSON_REAL,"underlay",jsonrpc::JSON_BOOLEAN,"x",jsonrpc::JSON_INTEGER,"y",jsonrpc::JSON_INTEGER, NULL), &Abstract_video_overlay_rpc_Server::add_msgI);
             this->bindAndAddMethod(new jsonrpc::Procedure("add_scrolling_msg", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "dropshadow",jsonrpc::JSON_BOOLEAN,"font",jsonrpc::JSON_STRING,"friendly_name",jsonrpc::JSON_STRING,"loop",jsonrpc::JSON_INTEGER,"msg",jsonrpc::JSON_STRING,"scroll_time",jsonrpc::JSON_REAL,"underlay",jsonrpc::JSON_BOOLEAN,"y_pos",jsonrpc::JSON_INTEGER, NULL), &Abstract_video_overlay_rpc_Server::add_scrolling_msgI);
+            this->bindAndAddMethod(new jsonrpc::Procedure("irc_privmsg", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "channel",jsonrpc::JSON_STRING,"msg",jsonrpc::JSON_STRING,"nick",jsonrpc::JSON_STRING, NULL), &Abstract_video_overlay_rpc_Server::irc_privmsgI);
             this->bindAndAddMethod(new jsonrpc::Procedure("remove_msg", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "friendly_name",jsonrpc::JSON_STRING, NULL), &Abstract_video_overlay_rpc_Server::remove_msgI);
             this->bindAndAddMethod(new jsonrpc::Procedure("remove_scrolling_msg", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_STRING, "friendly_name",jsonrpc::JSON_STRING, NULL), &Abstract_video_overlay_rpc_Server::remove_scrolling_msgI);
 
@@ -30,6 +31,11 @@ class Abstract_video_overlay_rpc_Server : public jsonrpc::AbstractServer<Abstrac
             response = this->add_scrolling_msg(request["dropshadow"].asBool(), request["font"].asString(), request["friendly_name"].asString(), request["loop"].asInt(), request["msg"].asString(), request["scroll_time"].asDouble(), request["underlay"].asBool(), request["y_pos"].asInt());
         }
 
+        inline virtual void irc_privmsgI(const Json::Value& request, Json::Value& response) 
+        {
+            response = this->irc_privmsg(request["channel"].asString(), request["msg"].asString(), request["nick"].asString());
+        }
+
         inline virtual void remove_msgI(const Json::Value& request, Json::Value& response) 
         {
             response = this->remove_msg(request["friendly_name"].asString());
@@ -43,6 +49,7 @@ class Abstract_video_overlay_rpc_Server : public jsonrpc::AbstractServer<Abstrac
 
         virtual std::string add_msg(const bool& dropshadow, const std::string& font, const std::string& friendly_name, const std::string& msg, const double& timeout, const bool& underlay, const int& x, const int& y) = 0;
         virtual std::string add_scrolling_msg(const bool& dropshadow, const std::string& font, const std::string& friendly_name, const int& loop, const std::string& msg, const double& scroll_time, const bool& underlay, const int& y_pos) = 0;
+        virtual std::string irc_privmsg(const std::string& channel, const std::string& msg, const std::string& nick) = 0;
         virtual std::string remove_msg(const std::string& friendly_name) = 0;
         virtual std::string remove_scrolling_msg(const std::string& friendly_name) = 0;
 
