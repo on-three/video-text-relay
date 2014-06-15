@@ -8,8 +8,6 @@
 #include "StaticMessage.hpp"
 #include "NikoNikoDisplay.hpp"
 #include <cairo.h>
-#include <thread>
-#include <mutex>
 
 using namespace jsonrpc;
 
@@ -52,7 +50,6 @@ private:
   NikoNikoMsgController m_nikoNikoMsgController;
   int m_width;
   int m_height;
-  std::mutex m_mutex;
 };
 
 #endif

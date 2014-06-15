@@ -17,15 +17,12 @@ std::string VideoOverlayRPCServer::add_scrolling_msg(const bool& dropshadow,
     const bool& underlay, 
     const int& y_pos)
 {
-  std::lock_guard<std::mutex> l(m_mutex);
-
   m_scrollingMsgController.AddMsg(m_width, m_height,
     font, friendly_name, loop, msg, scroll_time, y_pos, dropshadow, underlay);
   return friendly_name;
 }
 std::string VideoOverlayRPCServer::remove_scrolling_msg(const std::string& friendly_name)
 {
-  std::lock_guard<std::mutex> l(m_mutex);
 
   m_scrollingMsgController.RemoveMsg(friendly_name);
   return friendly_name;
@@ -40,7 +37,6 @@ std::string VideoOverlayRPCServer::add_msg(const bool& dropshadow,
     const int& x, const int& y)
 {
 
-  std::lock_guard<std::mutex> l(m_mutex);
   m_staticMsgController.AddMsg(m_width, m_height,
       font, 
       friendly_name, 
@@ -53,7 +49,6 @@ std::string VideoOverlayRPCServer::add_msg(const bool& dropshadow,
 }
 std::string VideoOverlayRPCServer::remove_msg(const std::string& friendly_name) {
 
-  std::lock_guard<std::mutex> l(m_mutex);
   m_staticMsgController.RemoveMsg(friendly_name);
 
   return friendly_name;
@@ -83,7 +78,6 @@ void VideoOverlayRPCServer::Initialize(void) {
   StartListening();
 }
 void VideoOverlayRPCServer::Update(float dt) {
-  std::lock_guard<std::mutex> l(m_mutex);
   m_scrollingMsgController.Update(dt);
   m_staticMsgController.Update(dt);
   m_nikoNikoMsgController.Update(dt);
@@ -93,7 +87,6 @@ void VideoOverlayRPCServer::Draw(cairo_t * cr) {
     return;
   }
   //TODO: better handling for layering of text
-  std::lock_guard<std::mutex> l(m_mutex);
   m_scrollingMsgController.Draw(cr);
   m_staticMsgController.Draw(cr);
   m_nikoNikoMsgController.Draw(cr);
