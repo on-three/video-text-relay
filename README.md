@@ -1,6 +1,7 @@
 #video-text-relay
 Simple Gstreamer based video stream relay which can overlay text of various sorts. Text can be set by tcp clients via JSON RPC calls, allowing simply coded daemons to dynamically change text superimposed on video streams.
 
+![Overlay Demo in VLC](https://github.com/on-three/VideoTextOverlay/blob/master/img/vlcsnap-2014-06-18-13h03m16s229?raw=true)
 
 #Overview
 This code builds a single executable, `video-text-relay`, which does the following:
@@ -14,6 +15,8 @@ None of this is very involved, and it can be considered pretty 'typical' GStream
 
 #Status
 I'm moving this forward, but still fairly primitive. Currently static and scrolling text displays are available, which can be added and removed via simple python JSON RPC clients.
+
+I haven't yet put this into a debian or other package, so it must currently be built from source. I have yet to introduce a proper platform independent built script (like cmake) so the makefile will have to suffice.
 
 #building
 I've tried to make it as simple to compile as possible, but this still relies upon having development packages for Gtk and GStreamer being available. I've only built it in LinuxMint16, where the following command _should_ cover all the Package Dependencies:
@@ -46,10 +49,7 @@ Run as below. The stream URL is  currently the only argument. TCP Server port is
 ```
 You can then connect VLC (and other media players?) to 'TCP://127.0.0.1:10000' and you should pick up the relay (with as yet no text!).
 
-![Overlay Demo in VLC](https://github.com/on-three/VideoTextOverlay/blob/master/img/Screenshot%20from%202014-04-28%2018:49:00.png?raw=true)
-
-
-##Adding Text
+##Displaying Text on the Relay Video Stream
 To add text overlays to the relayed video stream, 'video-text-realay' runs a simple http server that can pick up JSON RPC messages on (currently) port 8080. This allows JSON messages to control the text overlaid on the relayed stream. The required code for clients is fairly simple, and cound conceivably be coded in any language, but I'm currently using python.
 
 Python scripts to set text on a running relay are available in the /python directory.
