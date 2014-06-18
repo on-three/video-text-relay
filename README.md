@@ -38,7 +38,7 @@ make
 Haven't tried to build on Windows yet. In theory it ought to build, but I don't think I'll take the time to do so.
 
 
-##running video-text-realay
+##running video-text-relay
 Run as below. The stream URL is  currently the only argument. TCP Server port is still hard coded to 10000.
 ```
 ./video-text-relay "http://<stream URL>:<PORT>/;stream.nsv"
@@ -50,7 +50,7 @@ Run as below. The stream URL is  currently the only argument. TCP Server port is
 ```
 You can then connect VLC (and other media players?) to 'TCP://127.0.0.1:10000' and you should pick up the relay (with as yet no text!).
 
-##Displaying Text on the Relay Video Stream
+##Displaying Text on the Relayed Video Stream
 To add text overlays to the relayed video stream, 'video-text-realay' runs a simple http server that can pick up JSON RPC messages on (currently) port 8080. This allows JSON messages to control the text overlaid on the relayed stream. The required code for clients is fairly simple, and cound conceivably be coded in any language, but I'm currently using python.
 
 Python scripts to set text on a running relay are available in the /python directory.
