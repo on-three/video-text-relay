@@ -19,7 +19,7 @@ I'm moving this forward, but still fairly primitive. Currently static and scroll
 I've tried to make it as simple to compile as possible, but this still relies upon having development packages for Gtk and GStreamer being available. I've only built it in LinuxMint16, where the following command _should_ cover all the Package Dependencies:
 
 ```
-sudo apt-get install g++ libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libcairo2-dev libglib2.0-dev libgstreamer-plugins-good1.0-dev libpangocairo-1.0-0 libtclap-dev libjsoncpp-dev
+sudo apt-get install g++ libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libcairo2-dev libglib2.0-dev libgstreamer-plugins-good1.0-dev libpangocairo-1.0-0 libtclap-dev libjsoncpp-dev libboost-regex-dev
 ```
 
 ##Make

@@ -43,17 +43,22 @@ public:
   void LazyInitialization(cairo_t* context);
 
 private:
+  void UpdateTextMarkup(void);
+
+private:
   std::string m_msg;
+  std::string m_timeFormatText;
+  std::string m_displayedText;
   int m_ypos;
   int m_xpos;
   std::string m_fontfamily;
   bool m_dropshadow;
   bool m_underlay;
+  bool m_updateTime;//update time display on each render
   PangoLayout *pango_layout;
   PangoFontDescription *pango_fontdesc;
   PangoAttrList* pTextAttributes;
   PangoAttrList* no_color_attributes;
-  std::string displayed_text;
   PangoRectangle ink_rect, logical_rect;
 };
 
