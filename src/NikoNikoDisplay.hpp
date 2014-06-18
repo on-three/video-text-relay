@@ -53,9 +53,6 @@ public:
 
 private:
   int m_current_w, m_current_h;
-  //std::string m_friendly_name;
-  //int m_loops;
-  //int m_current_loop;
   int m_scroll_time;
   overlay::Text m_text;
   std::string m_nick;

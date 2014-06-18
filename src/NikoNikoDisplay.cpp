@@ -1,9 +1,6 @@
 #include "NikoNikoDisplay.hpp"
 #include "utilities.hpp"
-#include <iostream>
 #include <algorithm>
-using std::cout;
-using std::endl;
 
 bool NikoNikoMsg::sort_by_ypos(std::shared_ptr< NikoNikoMsg> first, std::shared_ptr<NikoNikoMsg> second) {
   return (first->m_text.Y()<second->m_text.Y());
@@ -47,18 +44,21 @@ void NikoNikoMsg::Resize(const int width, const int height) {
 };
 bool NikoNikoMsg::Update(const float dt)
 {
-  //d_pos = d/t * dt
+  
   int xpos = m_text.X();
   const int text_width = m_text.width();
   if(text_width<0) {
     return false;
   }
-  //cout<<xpos<<" "<<m_text.Y()<<endl;
-  xpos -= ((m_current_w + text_width)/m_scroll_time)*dt;
+  //d_pos = d/t * dt
+  int dx = ((m_current_w + text_width)/m_scroll_time)*dt;
+  if(dx<0) {
+    dx = 0;
+  }
+  xpos-=dx;
   if(xpos<(-1.0f*m_text.width())) {
     return true;//this message is "complete" when it's scrolled past the left window edge
   }
-  //cout<<"after--> "<<xpos<<endl;
   m_text.X(xpos);
   return false;
 };
@@ -97,7 +97,6 @@ void NikoNikoMsgController::Update(float dt) {
   for(std::list< std::shared_ptr< NikoNikoMsg > >::iterator imsg=m_msgs.begin();
     imsg!=m_msgs.end();)
   {
-    //cout<<"X:"<< (*imsg)->X()<<" Y:"<< (*imsg)->Y()<<endl;
     if((*imsg)->Update(dt)) {
       imsg = m_msgs.erase(imsg);
     }else{
@@ -116,14 +115,12 @@ void NikoNikoMsgController::Draw(cairo_t* context) {
   //we can now correctly set their y_pos value (initialized to -1) to interact
   //with the currently displayed messages correctly.
   if(!m_pending_msgs.empty()) {
-    cout<<"pending messages not empty!"<<endl;
-    
+
     for(std::list< std::shared_ptr< NikoNikoMsg > >::iterator imsg= m_pending_msgs.begin();
       imsg!=m_pending_msgs.end(); ++imsg) {
       (*imsg)->Initialize(context);
       const int w = (*imsg)->width();
       const int h = (*imsg)->height();
-      cout<<"pos init h "<<h<<" width:"<<w<<endl;
       const int y = FindMsgYPos(w,h);
       (*imsg)->Y(y);
 
@@ -140,15 +137,12 @@ int NikoNikoMsgController::FindMsgYPos(const int width, const int height) {
       imsg!=m_msgs.end(); ++imsg) {
     const int y = (*imsg)->Y();
     const int h = (*imsg)->height();
-    cout<<" y "<<y<<" height"<<h<<" new_y"<<new_y<<endl;
     if(y>new_y+height) {
-      cout<<"assigning new y (between) pos at "<<new_y<<endl;
       return new_y;
     }else{
       new_y = y+h;
     }
   }
-  cout<<"assigning new y pos at "<<new_y<<endl;
   return new_y;
 }
 
