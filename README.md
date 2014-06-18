@@ -10,6 +10,8 @@ This code builds a single executable, `video-text-relay`, which does the followi
 * Relays the video stream to a local TCP server currently at 127.0.0.1:10000
 * Text can be added/removed via JSON RPC calls currently on 127.0.0.1:8080
 
+![application diagram](https://raw.githubusercontent.com/on-three/video-text-relay/master/img/video_text_relay.png)
+
 None of this is very involved, and it can be considered pretty 'typical' GStreamer code.
 
 #Status
