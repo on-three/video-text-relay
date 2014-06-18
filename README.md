@@ -19,12 +19,8 @@ I'm moving this forward, but still fairly primitive. Currently static and scroll
 I've tried to make it as simple to compile as possible, but this still relies upon having development packages for Gtk and GStreamer being available. I've only built it in LinuxMint16, where the following command _should_ cover all the Package Dependencies:
 
 ```
-sudo apt-get install g++ libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libcairo2-dev libglib2.0-dev libgstreamer-plugins-good1.0-dev libpangocairo-1.0-0 libtclap-dev
+sudo apt-get install g++ libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libcairo2-dev libglib2.0-dev libgstreamer-plugins-good1.0-dev libpangocairo-1.0-0 libtclap-dev libjsoncpp-dev
 ```
-
-##libjson-rpc-cpp
-The only dependency that isn't widely available via package manager is this library support for JSON Remote Procedure Calls. I really want to use this, so i'm not removing this dependency. It must be locally built and insalled to build this code.
-To do so, simply follow the instructions on this page: https://github.com/cinemast/libjson-rpc-cpp.
 
 ##Make
 If those packages are available, you should be able to simply download the repository, move to the src directory and build.
@@ -54,7 +50,7 @@ You can then connect VLC (and other media players?) to 'TCP://127.0.0.1:10000' a
 
 
 ##Adding Text
-In addition to relaying video, the 'video-text-realay' also runs a simple http server that can pick up JSON RPC messages on (currently) port 8080. This allows the correct JSON messages to control the text overlaid on the relayed stream very simply. The required code for clients is fairly simple, and cound conceivably be coded in any language, but I'm currently using python.
+To add text overlays to the relayed video stream, 'video-text-realay' runs a simple http server that can pick up JSON RPC messages on (currently) port 8080. This allows JSON messages to control the text overlaid on the relayed stream. The required code for clients is fairly simple, and cound conceivably be coded in any language, but I'm currently using python.
 
 Python scripts to set text on a running relay are available in the /python directory.
 
@@ -123,7 +119,7 @@ An example of some Staic text can be seen below:
 As stated above, this is fairly primitive, but I believe I've confronted all major hurdles to showing text superimposed upon a relayed video stream.
 The primary outstanding areas where work needs to be done are:
 * Currently these executables relay to local TCP clients (VLC via TCP connection provided by the GStreamer 'tcpsink' element). But a better model to stream to numerous remote clients may be needed. Perhaps 'tcpsink' need be replaced with the GStreamer shoutcast backend? Or their HTTP sink backend? This needs looking into.
-* I've only demonstrated a single RPC call that changes the text on the screen. I'd now have to (re) build code that allows the on-screen text to be manipulated in any number of ways: list boxes, time displays, text displays that use Pango Markup for text colors and weights.
+* ~~I've only demonstrated a single RPC call that changes the text on the screen. I'd now have to (re) build code that allows the on-screen text to be manipulated in any number of ways: list boxes, time displays, text displays that use Pango Markup for text colors and weights.~~
 * ~~The current code, though it works as a demo, is very poor quality. Needs a lot of work.~~
 * ~~The JSON RPC mechanism cleanly separates relay servers from any possible client. But clients would have to be coded in some language to provide things like live IRC chats and other data.~~
 
