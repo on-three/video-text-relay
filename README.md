@@ -1,12 +1,11 @@
 #video-text-relay
 Simple Gstreamer based video stream relay which can overlay text of various sorts. Text can be set by tcp clients via JSON RPC calls, allowing simply coded daemons to dynamically change text superimposed on video streams.
-
-![Overlay Demo in VLC](https://github.com/on-three/VideoTextOverlay/blob/master/img/vlcsnap-2014-06-18-13h03m16s229?raw=true)
+![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/video-text-relay/master/img/vlcsnap-2014-06-18-13h03m16s229.png)
 
 #Overview
 This code builds a single executable, `video-text-relay`, which does the following:
-* Connects to an HTTP served viseo stream (of various containers/audio+video encodings)
-* Renders text on the decoded video
+* Connects to an HTTP served video stream (of various containers/audio+video encodings)
+* Renders text onto the decoded video stream (with possible text markup)
 * Reencodes the video to a standard MPEGTS(h264/mp3) video with text overlays
 * Relays the video stream to a local TCP server currently at 127.0.0.1:10000
 * Text can be added/removed via JSON RPC calls currently on 127.0.0.1:8080
@@ -85,7 +84,7 @@ optional arguments:
 ```
 An example of superimposed video text is shown below.
 
-![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/VideoTextOverlay/e3a66d8a2a544106cd3198091f11d275a18979f8/img/vlcsnap-2014-06-06-16h27m41s56.png)
+![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/video-text-relay/master/img/Screenshot%20from%202014-04-28%2018:49:00.png)
 
 ###static_msg
 This python script can apply staic (non moving) text to a specific location (x,y in pixels) over the relay stream. Simple help is avilable as below:
