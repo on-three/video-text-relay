@@ -14,11 +14,6 @@ This code builds a single executable, `video-text-relay`, which does the followi
 
 None of this is very involved, and it can be considered pretty 'typical' GStreamer code.
 
-#Status
-I'm moving this forward, but still fairly primitive. Currently static and scrolling text displays are available, which can be added and removed via simple python JSON RPC clients.
-
-I haven't yet put this into a debian or other package, so it must currently be built from source. I have yet to introduce a proper platform independent built script (like cmake) so the makefile will have to suffice.
-
 #building
 I've tried to make it as simple to compile as possible, but this still relies upon having development packages for Gtk and GStreamer being available. I've only built it in LinuxMint16, where the following command _should_ cover all the Package Dependencies:
 
@@ -116,8 +111,33 @@ optional arguments:
 An example of some Staic text can be seen below:
 ![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/VideoTextOverlay/e3a66d8a2a544106cd3198091f11d275a18979f8/img/Screenshot%20from%202014-04-28%2019:57:16.png)
 
-#What Needs to Be Done:
+##Text Markup
+When overlaying text on a video stream, the text strings can be decorated with two kinds of markup:
+* Pango Markup: To control text size, foreground and background color, font family, italic, bold etc
+* strftime Markup: To insert current time information into the displayed string.
+
+###strftime Markup
+The current time can be inserted into any video stream overlay string by using pairs of curly braces enclosing normal strftime time format strings of the sort: `{{%Y-%m-%d %H:%M:%S}}`
+For example, I want to display the current time in the upper right corner of the video stream, I could use the "static_text" python script (above) as follows:
+```
+~/code/video-text-relay $ ./python/static_msg "time_display" -m '{{%Y-%m-%d %H:%M:%S}}'  -s -b -x 475 -y 75
+```
+Note that the `-s` and `-b` switches above add a drop shadow and shaded underlay to make the text easier to read.
+
+###Pango Markup
+[Pango markup is described here](https://developer.gnome.org/pango/stable/PangoMarkupFormat.html). Markup of any sort can be injected into the displayed text. Markup is applied after the above time markup is applied.
+For example, if I wanted to display the above upper right hand time display with extra large text and yellow, I could update the command as:
+```
+~/code/video-text-relay $ ./python/static_msg "one" -m '<span size="xx-large" foreground="yellow">{{%Y-%m-%d %H:%M:%S}}</span>'  -s -b -x 475 -y 75
+```
+If Pango markup parsing fails, the markup will be displayed on screen as plain text.
+
+#Status and What Needs to Be Done:
+I'm moving this forward, but still fairly primitive. Currently static and scrolling text displays are available, which can be added and removed via simple python JSON RPC clients.
+
+I haven't yet put this into a debian or other package, so it must currently be built from source. I have yet to introduce a proper platform independent built script (like cmake) so the makefile will have to suffice.
 As stated above, this is fairly primitive, but I believe I've confronted all major hurdles to showing text superimposed upon a relayed video stream.
+
 The primary outstanding areas where work needs to be done are:
 * Currently these executables relay to local TCP clients (VLC via TCP connection provided by the GStreamer 'tcpsink' element). But a better model to stream to numerous remote clients may be needed. Perhaps 'tcpsink' need be replaced with the GStreamer shoutcast backend? Or their HTTP sink backend? This needs looking into.
 * ~~I've only demonstrated a single RPC call that changes the text on the screen. I'd now have to (re) build code that allows the on-screen text to be manipulated in any number of ways: list boxes, time displays, text displays that use Pango Markup for text colors and weights.~~
