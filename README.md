@@ -1,6 +1,6 @@
 #video-text-relay
 Simple Gstreamer based video stream relay which can overlay text of various sorts. Text can be set by tcp clients via JSON RPC calls, allowing simply coded daemons to dynamically change text superimposed on video streams.
-![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/video-text-relay/master/img/vlcsnap-2014-06-18-13h03m16s229.png)
+![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/video-text-relay/master/img/vlcsnap-2014-06-18-18h00m31s153.png)
 
 #Overview
 This code builds a single executable, `video-text-relay`, which does the following:
