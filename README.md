@@ -25,8 +25,8 @@ sudo apt-get install g++ libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev li
 If those packages are available, you should be able to simply download the repository, move to the src directory and build.
 
 ```
-git clone https://github.com/on-three/VideoTextOverlay
-cd VideoTextOverlay/src
+git clone https://github.com/on-three/video-text-relay
+cd video-text-relay/src
 make
 ```
 
