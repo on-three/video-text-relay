@@ -7,8 +7,9 @@ This code builds a single executable, `video-text-relay`, which does the followi
 * Connects to an HTTP served video stream (of various containers/audio+video encodings)
 * Renders text onto the decoded video stream (with possible text markup)
 * Reencodes the video to a standard MPEGTS(h264/mp3) video with text overlays
-* Relays the video stream to a local TCP server currently at 127.0.0.1:10000
-* Text can be added/removed via JSON RPC calls currently on 127.0.0.1:8080
+* Relays the video stream to a local TCP server currently at 127.0.0.1:10000 (configurable)
+* Text can be added/removed via JSON RPC calls currently on 127.0.0.1:8080 (configurable)
+* An instance of VLC or some other application can relay the TCP stream via HTTP to any client.
 
 ![application diagram](https://raw.githubusercontent.com/on-three/video-text-relay/master/img/video_text_relay.png)
 
@@ -139,7 +140,7 @@ I haven't yet put this into a debian or other package, so it must currently be b
 As stated above, this is fairly primitive, but I believe I've confronted all major hurdles to showing text superimposed upon a relayed video stream.
 
 The primary outstanding areas where work needs to be done are:
-* Currently these executables relay to local TCP clients (VLC via TCP connection provided by the GStreamer 'tcpsink' element). But a better model to stream to numerous remote clients may be needed. Perhaps 'tcpsink' need be replaced with the GStreamer shoutcast backend? Or their HTTP sink backend? This needs looking into.
+* ~~Currently these executables relay to local TCP clients (VLC via TCP connection provided by the GStreamer 'tcpsink' element). But a better model to stream to numerous remote clients may be needed. Perhaps 'tcpsink' need be replaced with the GStreamer shoutcast backend? Or their HTTP sink backend? This needs looking into.~~ As the application only outputs a TCP stream of the reencoded video, it currently needs to be further relayed via VLC (or some other applicaiton) to serve clients. To do this configure VLC to receive the video stream on 127.0.0.1:XXX and then provide an HTTP stream at whatever port you like. Multiple clients can then pick up the text overlaid stream.
 * ~~I've only demonstrated a single RPC call that changes the text on the screen. I'd now have to (re) build code that allows the on-screen text to be manipulated in any number of ways: list boxes, time displays, text displays that use Pango Markup for text colors and weights.~~
 * ~~The current code, though it works as a demo, is very poor quality. Needs a lot of work.~~
 * ~~The JSON RPC mechanism cleanly separates relay servers from any possible client. But clients would have to be coded in some language to provide things like live IRC chats and other data.~~
