@@ -1,8 +1,8 @@
-#video-text-relay
+# video-text-relay
 Simple Gstreamer based video stream relay which can overlay text of various sorts. Text can be set by tcp clients via JSON RPC calls, allowing simply coded daemons to dynamically change text superimposed on video streams.
 ![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/video-text-relay/master/img/vlcsnap-2014-06-18-18h00m31s153.png)
 
-#Overview
+# Overview
 This code builds a single executable, `video-text-relay`, which does the following:
 * Connects to an HTTP served video stream (of various containers/audio+video encodings)
 * Renders text onto the decoded video stream (with possible text markup)
@@ -15,14 +15,13 @@ This code builds a single executable, `video-text-relay`, which does the followi
 
 None of this is very involved, and it can be considered pretty 'typical' GStreamer code.
 
-#building
+# building
 I've tried to make it as simple to compile as possible, but this still relies upon having development packages for Gtk and GStreamer being available. I've only built it in LinuxMint16, where the following command _should_ cover all the Package Dependencies:
 
 ```
 sudo apt-get install g++ libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libcairo2-dev libglib2.0-dev libgstreamer-plugins-good1.0-dev libpangocairo-1.0-0 libtclap-dev libjsoncpp-dev libboost-regex-dev
 ```
 
-##Make
 If those packages are available, you should be able to simply download the repository, move to the src directory and build.
 
 ```
@@ -34,7 +33,7 @@ make
 Haven't tried to build on Windows yet. In theory it ought to build, but I don't think I'll take the time to do so.
 
 
-##running video-text-relay
+## running video-text-relay
 Run as below. The stream URL is  currently the only argument. TCP Server port is still hard coded to 10000.
 ```
 ./video-text-relay "http://<stream URL>:<PORT>/;stream.nsv"
@@ -46,12 +45,12 @@ Run as below. The stream URL is  currently the only argument. TCP Server port is
 ```
 You can then connect VLC (and other media players?) to 'TCP://127.0.0.1:10000' and you should pick up the relay (with as yet no text!).
 
-##Displaying Text on the Relayed Video Stream
+## Displaying Text on the Relayed Video Stream
 To add text overlays to the relayed video stream, 'video-text-realay' runs a simple http server that can pick up JSON RPC messages on (currently) port 8080. This allows JSON messages to control the text overlaid on the relayed stream. The required code for clients is fairly simple, and cound conceivably be coded in any language, but I'm currently using python.
 
 Python scripts to set text on a running relay are available in the /python directory.
 
-###scrolling_msg
+### scrolling_msg
 This python script adds scrolling msg text to the video. Simple command line help is available:
 ```
 ./python/scrolling_msg -h
@@ -84,7 +83,7 @@ An example of superimposed video text is shown below.
 
 ![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/video-text-relay/master/img/Screenshot%20from%202014-04-28%2018:49:00.png)
 
-###static_msg
+### static_msg
 This python script can apply staic (non moving) text to a specific location (x,y in pixels) over the relay stream. Simple help is avilable as below:
 ```
 ./python/static_msg -h
@@ -112,12 +111,12 @@ optional arguments:
 An example of some Staic text can be seen below:
 ![Overlay Demo in VLC](https://raw.githubusercontent.com/on-three/VideoTextOverlay/e3a66d8a2a544106cd3198091f11d275a18979f8/img/Screenshot%20from%202014-04-28%2019:57:16.png)
 
-##Text Markup
+## Text Markup
 When overlaying text on a video stream, the text strings can be decorated with two kinds of markup:
 * Pango Markup: To control text size, foreground and background color, font family, italic, bold etc
 * strftime Markup: To insert current time information into the displayed string.
 
-###strftime Markup
+### strftime Markup
 The current time can be inserted into any video stream overlay string by using pairs of curly braces enclosing normal strftime time format strings of the sort: `{{%Y-%m-%d %H:%M:%S}}`
 For example, I want to display the current time in the upper right corner of the video stream, I could use the "static_text" python script (above) as follows:
 ```
@@ -125,7 +124,7 @@ For example, I want to display the current time in the upper right corner of the
 ```
 Note that the `-s` and `-b` switches above add a drop shadow and shaded underlay to make the text easier to read.
 
-###Pango Markup
+### Pango Markup
 [Pango markup is described here](https://developer.gnome.org/pango/stable/PangoMarkupFormat.html). Markup of any sort can be injected into the displayed text. Markup is applied after the above time markup is applied.
 For example, if I wanted to display the above upper right hand time display with extra large text and yellow, I could update the command as:
 ```
